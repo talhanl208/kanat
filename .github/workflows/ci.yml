@@ -71,6 +71,6 @@ jobs:
       - name: pip-audit (bilinen açıklı bağımlılık var mı?)
         run: pip-audit -r requirements.txt
       - name: Depoda sır var mı?
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
