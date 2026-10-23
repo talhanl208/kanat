@@ -1,0 +1,19 @@
+{% load kanat_tags %}
+<article class="proje">
+  <div class="proje-ust">
+    <div class="avatar" aria-hidden="true">{% if project.team.logo %}<img src="{{ project.team.logo.url }}" alt="" loading="lazy" width="44" height="44">{% else %}{{ project.team.initials }}{% endif %}</div>
+    <div>
+      <h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+      <span class="kucuk soluk">{{ project.team.name }}, {{ project.team.city }}</span>
+    </div>
+    {% if project.match %}<div class="sag">{% include "partials/score_ring.html" with match=project.match %}</div>{% endif %}
+  </div>
+  <p class="ozet">{{ project.summary }}</p>
+  <ul class="etiketler" aria-label="Açık ihtiyaçlar">
+    {% for need in project.open_needs|slice:":4" %}<li class="etiket {{ need.kind }}">{{ need.title|truncatechars:34 }}</li>{% endfor %}
+  </ul>
+  <div class="proje-alt">
+    <span>{{ project.get_competition_display }}</span>
+    <span>{{ project.get_stage_display }}</span>
+  </div>
+</article>

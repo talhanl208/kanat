@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ award.get_kind_display }} belgesi — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap">
+  <article class="belge">
+    <svg class="yildiz-buyuk" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-yildiz"/></svg>
+    <p class="gokturk" aria-hidden="true">𐰴𐰣𐱃</p>
+    <h1>{{ award.get_kind_display }}</h1>
+    <p>{{ award.period_label }}{% if award.league %}, {{ award.league_label }} ligi{% endif %}, {{ award.rank }}. sıra</p>
+    <p class="kime">{{ award.sponsor.name }}</p>
+    <p class="orta">Genç mühendislerin projelerine verdiği destekle {{ award.points }} Kanat puanı toplayarak bu ödülü almaya hak kazanmıştır. Geleceğin yönünü değiştiren hayatlara kanat olduğunuz için teşekkür ederiz.</p>
+    <p class="kucuk soluk">Doğrulama kodu <span class="ozet-kod">{{ award.code }}</span>, düzenlenme {{ award.issued_at|date:"d.m.Y" }}. Bu sayfanın adresi belgenin doğrulama bağlantısıdır.</p>
+  </article>
+</div>
+{% endblock %}

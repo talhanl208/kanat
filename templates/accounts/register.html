@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Katıl — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>Aramıza katıl</h1>
+  <p>Hesap tek kişiye aittir. Takımında 18 yaşından küçük üyeler varsa hesabı danışman öğretmenin açmalı.</p>
+</div>
+<div class="kap orta">
+  <form class="form kutu" method="post" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% include "partials/form_errors.html" %}
+    {% include "partials/field.html" with field=form.role %}
+    <div class="form-satir">
+      {% include "partials/field.html" with field=form.full_name %}
+      {% include "partials/field.html" with field=form.email %}
+    </div>
+    <div class="form-satir">
+      {% include "partials/field.html" with field=form.password1 %}
+      {% include "partials/field.html" with field=form.password2 %}
+    </div>
+    <div class="uyari-kutu turkuaz">
+      <p><strong>Beyanlar ve onaylar.</strong> Zorunlu kutucuklar hizmetin kurulması için gerekir. Bülten onayı isteğe bağlıdır; vermezsen hiçbir özellikten mahrum kalmazsın.</p>
+      {% include "partials/field.html" with field=form.adult %}
+      {% include "partials/field.html" with field=form.privacy_notice %}
+      {% include "partials/field.html" with field=form.terms %}
+      {% include "partials/field.html" with field=form.marketing %}
+    </div>
+    <div class="form-eylem">
+      <button class="dugme" type="submit">Hesabımı oluştur</button>
+      <span class="soluk">Zaten üye misin? <a href="{% url 'accounts:login' %}">Giriş yap</a></span>
+    </div>
+  </form>
+</div>
+{% endblock %}

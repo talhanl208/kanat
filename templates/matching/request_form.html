@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Destek talebi — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  {% if direction == "offer" %}
+    <h1>{{ project.title }} projesine destek ol</h1>
+    <p>Teklifin takıma iletilir. Kabul ederlerse sözleşme adımına geçersiniz. Para veya ürün bu aşamada el değiştirmez.</p>
+  {% else %}
+    <h1>{{ sponsor.name }} adlı destekçiden destek iste</h1>
+    <p>Kısa ve somut yaz: ne lazım, ne zamana, karşılığında destekçiye ne sunuyorsunuz?</p>
+  {% endif %}
+</div>
+<div class="kap orta">
+  {% if match %}
+    <div class="kutu">
+      <div class="kutu-bas"><h2>Uyum</h2>{% include "partials/score_ring.html" with buyuk=1 %}</div>
+      <ul class="nedenler">{% for r in match.reasons %}<li>{{ r }}</li>{% endfor %}</ul>
+    </div>
+  {% endif %}
+  <form class="form kutu" method="post" novalidate>
+    {% csrf_token %}
+    {% include "partials/form_errors.html" %}
+    {% if form.project %}{% include "partials/field.html" with field=form.project %}{% endif %}
+    <div class="form-satir">{% include "partials/field.html" with field=form.kind %}{% include "partials/field.html" with field=form.amount %}{% include "partials/field.html" with field=form.mentor_hours %}</div>
+    {% include "partials/field.html" with field=form.need %}
+    {% include "partials/field.html" with field=form.note %}
+    <p class="kucuk soluk">Mesajına telefon, T.C. kimlik no gibi kişisel veriler yazma. İletişim platform üzerinden yürür.</p>
+    <div class="form-eylem"><button class="dugme{% if direction == 'offer' %} altin{% endif %}" type="submit">{% if direction == "offer" %}Teklifi gönder{% else %}Talebi gönder{% endif %}</button></div>
+  </form>
+</div>
+{% endblock %}

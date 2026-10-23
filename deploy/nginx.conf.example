@@ -1,0 +1,36 @@
+# Docker yerine doğrudan sunucuda nginx + gunicorn kullanacaklar için örnek.
+# HTTPS sertifikası için: certbot --nginx -d kanat.example.com
+server {
+    listen 443 ssl http2;
+    server_name kanat.example.com;
+
+    ssl_certificate     /etc/letsencrypt/live/kanat.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/kanat.example.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    client_max_body_size 6m;          # Django sınırıyla uyumlu
+    server_tokens off;
+
+    location /media/ {
+        alias /srv/kanat/media/;
+        add_header Content-Security-Policy "default-src 'none'; img-src 'self'; sandbox" always;
+        add_header X-Content-Type-Options nosniff always;
+        location ~* \.(php|py|sh|html?|svg|js)$ { deny all; }
+    }
+
+    # /srv/kanat/private_media ASLA burada sunulmaz.
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $remote_addr;   # istemci başlığını ezerek sahteciliği önler
+        proxy_read_timeout 30s;
+    }
+}
+
+server {
+    listen 80;
+    server_name kanat.example.com;
+    return 301 https://$host$request_uri;
+}

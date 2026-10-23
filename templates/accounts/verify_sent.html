@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="kap dar sayfa-bas">
+  <h1>E-postanı kontrol et</h1>
+  <p>Kayıt işlemini tamamlamak için gereken bilgiyi <strong>{{ email }}</strong> adresine gönderdik. Gelmediyse istenmeyen e-posta klasörüne bak.</p>
+  <a class="dugme ikincil" href="{% url 'accounts:login' %}">Giriş sayfasına dön</a>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "legal/base_legal.html" %}
+{% block legal %}
+<p>Bu aydınlatma metni, 6698 sayılı Kişisel Verilerin Korunması Kanunu (“KVKK”) md. 10 ve Aydınlatma Yükümlülüğünün Yerine Getirilmesinde Uyulacak Usul ve Esaslar Hakkında Tebliğ uyarınca, {{ SITE.SITE_NAME }} platformunu (“Platform”) kullanan kişileri bilgilendirmek için hazırlanmıştır.</p>
+
+<h2>1. Veri sorumlusu</h2>
+<p>{{ SITE.DATA_CONTROLLER_NAME }}<br>Adres: {{ SITE.DATA_CONTROLLER_ADDRESS }}<br>E-posta: {{ SITE.DATA_CONTROLLER_EMAIL }}{% if SITE.DATA_CONTROLLER_KEP %}<br>KEP: {{ SITE.DATA_CONTROLLER_KEP }}{% endif %}</p>
+
+<h2>2. Hangi verileri, hangi amaçla ve hangi hukuki sebeple işliyoruz?</h2>
+<table>
+  <thead><tr><th>Veri kategorisi</th><th>Örnek</th><th>Amaç</th><th>Hukuki sebep (KVKK md. 5/2)</th></tr></thead>
+  <tbody>
+    <tr><td>Kimlik</td><td>İletişim kişisinin adı soyadı</td><td>Üyelik hesabının oluşturulması, sözleşme taraflarının belirlenmesi</td><td>Sözleşmenin kurulması ve ifası (c)</td></tr>
+    <tr><td>İletişim</td><td>E-posta adresi</td><td>Giriş, doğrulama, talep ve mesaj bildirimleri, parola sıfırlama</td><td>Sözleşmenin kurulması ve ifası (c)</td></tr>
+    <tr><td>Mesleki / eğitim</td><td>Okul, kurum, şehir, sektör, takım ve proje bilgileri</td><td>Takım ve destekçilerin eşleştirilmesi, profillerin yayımlanması</td><td>Sözleşmenin ifası (c); ilgili kişinin kendisi tarafından alenileştirilmesi (d)</td></tr>
+    <tr><td>Müşteri işlem</td><td>Destek talepleri, mesajlar, sözleşme onayları, teşekkür notları, puan kayıtları</td><td>Destek sürecinin yürütülmesi, sıralama ve ödüllerin hesaplanması, uyuşmazlıklarda ispat</td><td>Sözleşmenin ifası (c); bir hakkın tesisi, kullanılması veya korunması (e)</td></tr>
+    <tr><td>İşlem güvenliği</td><td>Anahtarlı özetle takma adlandırılmış IP bilgisi, oturum çerezi, giriş ve onay kayıtları; iki adımlı doğrulama açıksa doğrulama anahtarı ve kurtarma kodlarının özetleri</td><td>Hesap güvenliği, kötüye kullanımın ve saldırıların önlenmesi</td><td>Hukuki yükümlülük (ç); meşru menfaat (f)</td></tr>
+    <tr><td>İşlem güvenliği (puan denetimi)</td><td>Takım ve destekçi hesaplarının takma adlandırılmış ağ bilgisi ile e-posta alan adının karşılaştırılması</td><td>Sahte destek ve sıralama manipülasyonunun önlenmesi. Şüpheli durumda puan silinmez; bir yönetici inceleyip karar verir.</td><td>Meşru menfaat (f)</td></tr>
+    <tr><td>Takım daveti</td><td>Kaptanın davet ettiği kişinin e-posta adresi</td><td>Davetin iletilmesi ve kabul edildiğinde takıma eklenme</td><td>Sözleşmenin kurulması (c); meşru menfaat (f)</td></tr>
+    <tr><td>Sponsorluk dosyası ve doğrulama başvurusu</td><td>Takımın yüklediği PDF dosyası; doğrulama için yazılan açıklama ve bağlantı</td><td>Destekçilerin projeyi değerlendirmesi; doğrulanmış rozetin verilmesi</td><td>Sözleşmenin ifası (c)</td></tr>
+    <tr><td>Bildirimler</td><td>Bildirim içerikleri, okunma zamanı, e-posta tercihi</td><td>Talep, mesaj, sözleşme ve teslim gelişmelerinin sitede ve e-postayla bildirilmesi</td><td>Sözleşmenin ifası (c)</td></tr>
+    <tr><td>Pazarlama (isteğe bağlı)</td><td>E-posta adresi</td><td>Bülten ve duyuruların gönderilmesi</td><td>Açık rıza (md. 5/1)</td></tr>
+  </tbody>
+</table>
+<p>Platform; T.C. kimlik numarası, telefon, ev adresi, fotoğraf veya özel nitelikli kişisel veri (sağlık, din, etnik köken vb.) <strong>talep etmez</strong>. Lütfen bu verileri profil, proje, mesaj alanlarına ya da sponsorluk dosyasına koymayın. Sponsorluk dosyaları herkese açık değildir; yalnızca giriş yapmış destekçiler, takım üyeleri ve yöneticiler indirebilir.</p>
+
+<h2>3. Reşit olmayan kullanıcılar</h2>
+<p>Hesap açmak için 18 yaşını doldurmuş olmak gerekir. Reşit olmayan üyeleri bulunan takımların hesabı danışman öğretmen veya başka bir yetişkin sorumlu tarafından açılır ve yönetilir. Takım üyelerinin kişisel verileri Platform'a girilmez; takım bir bütün olarak tanıtılır.</p>
+
+<h2>4. Kişisel veriler kimlere aktarılabilir?</h2>
+<ul>
+  <li><strong>Eşleştiğiniz taraf:</strong> Bir destek süreci başladığında takım adı, proje bilgileri ve mesajlarınız karşı tarafla paylaşılır. Takım tarafında mesajlar, takımın tüm üyelerince görülür ve gönderenin adı (ilk adı) gösterilir. Sözleşmede yer alan taraf bilgileri iki tarafça görülür.</li>
+  <li><strong>Herkese açık profil:</strong> Takım ve destekçi profilleri, projeler, sıralama, ödüller ve herkese açık olarak işaretlediğiniz teşekkür notları Platform'da yayımlanır. E-posta adresiniz yayımlanmaz.</li>
+  <li><strong>Hizmet sağlayıcılar:</strong> Barındırma ve e-posta gönderim hizmeti aldığımız tedarikçiler (veri işleyen sıfatıyla). [Tedarikçi adlarını ve ülkelerini yazın.]</li>
+  <li><strong>Yetkili kurumlar:</strong> Hukuki yükümlülük gereği talep edilmesi hâlinde yetkili kamu kurum ve kuruluşları.</li>
+</ul>
+<p>Yurt dışında bulunan bir hizmet sağlayıcı kullanılması hâlinde aktarım, KVKK md. 9'da öngörülen usullere (yeterlilik kararı, standart sözleşme vb.) uygun olarak yapılır. [Barındırma Türkiye'de değilse bu bölümü güncelleyin.]</p>
+
+<h2>5. Toplama yöntemi</h2>
+<p>Kişisel veriler, Platform üzerindeki formlar aracılığıyla doğrudan sizden ve Platform'u kullanırken otomatik yollarla (oturum çerezi, güvenlik kayıtları) elektronik ortamda toplanır.</p>
+
+<h2>6. Saklama süreleri</h2>
+<ul>
+  <li>Hesap ve profil verileri: hesap açık olduğu sürece; hesap kapatıldığında silinir veya anonim hâle getirilir.</li>
+  <li>E-postası hiç doğrulanmamış ve profil oluşturulmamış hesaplar: 14 gün sonra silinir.</li>
+  <li>Onaylanmış sponsorluk sözleşmelerinin kopyaları: zamanaşımı süreleri boyunca (genel olarak 10 yıl) ispat amacıyla.</li>
+  <li>Güvenlik kayıtları: 2 yıl.</li>
+  <li>Bildirimler: okunduktan 90 gün sonra, okunmasa da en geç 1 yıl sonra silinir.</li>
+  <li>Reddedilen ya da geri çekilen süreçlerin mesajları: 2 yıl. Sonuçlanan şikâyetler: 2 yıl. Yanıtlanan KVKK başvuruları: 3 yıl.</li>
+  <li>Takım davetleri: kabul edildikten ya da süresi dolduktan 30 gün sonra silinir.</li>
+  <li>Açık rıza ile işlenen pazarlama verileri: rıza geri alınana kadar.</li>
+</ul>
+<p>Süresi dolan kayıtlar her gün çalışan otomatik bir görevle silinir.</p>
+
+<h2>7. Haklarınız (KVKK md. 11)</h2>
+<p>Kişisel verilerinizin işlenip işlenmediğini öğrenme, işlenmişse bilgi talep etme, işleme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme, aktarıldığı üçüncü kişileri bilme, eksik veya yanlış işlenmişse düzeltilmesini ve silinmesini isteme, bu işlemlerin aktarılan üçüncü kişilere bildirilmesini isteme, münhasıran otomatik sistemlerle analiz edilmesi sonucu aleyhinize bir sonuç çıkmasına itiraz etme ve kanuna aykırı işleme nedeniyle zarara uğramanız hâlinde zararın giderilmesini talep etme haklarına sahipsiniz.</p>
+<p>Eşleştirme önerileri kural tabanlı bir otomatik değerlendirmedir; uyum puanının nedenleri size her zaman gösterilir ve hiçbir karar yalnızca bu puana dayanılarak verilmez.</p>
+<p>Verilerinizi <a href="{% url 'accounts:settings' %}">Hesap ve gizlilik</a> sayfasından indirebilir, düzeltebilir veya hesabınızı kapatabilirsiniz. Diğer talepleriniz için <a href="{% url 'core:data_request' %}">KVKK başvuru formunu</a> kullanabilir ya da Veri Sorumlusuna Başvuru Usul ve Esasları Hakkında Tebliğ'e uygun olarak yukarıdaki adrese yazılı olarak başvurabilirsiniz. Başvurular en geç 30 gün içinde ücretsiz olarak sonuçlandırılır.</p>
+{% endblock %}

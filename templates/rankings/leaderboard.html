@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load kanat_tags %}
+{% block title %}Kanat sıralaması — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <h1>Kanat sıralaması</h1>
+  <p>{{ period.label }}{% if league %}, {% for code, label in leagues %}{% if code == league %}{{ label }} ligi{% endif %}{% endfor %}{% endif %}. Puanlar yalnızca takımların onayladığı desteklerden doğar; sıralamada yalnızca doğrulanmış destekçiler yer alır.</p>
+  <div class="form-eylem">
+    <nav class="sekmeler" aria-label="Dönem">
+      <a href="?donem=ay{% if league %}&amp;lig={{ league }}{% endif %}" aria-current="{% if period.key == 'ay' %}true{% else %}false{% endif %}">Bu ay</a>
+      <a href="?donem=yil{% if league %}&amp;lig={{ league }}{% endif %}" aria-current="{% if period.key == 'yil' %}true{% else %}false{% endif %}">Bu yıl</a>
+      <a href="?donem=tum{% if league %}&amp;lig={{ league }}{% endif %}" aria-current="{% if period.key == 'tum' %}true{% else %}false{% endif %}">Tüm zamanlar</a>
+    </nav>
+    <nav class="sekmeler" aria-label="Lig">
+      <a href="?donem={{ period.key }}" aria-current="{% if not league %}true{% else %}false{% endif %}">Genel</a>
+      {% for code, label in leagues %}<a href="?donem={{ period.key }}&amp;lig={{ code }}" aria-current="{% if league == code %}true{% else %}false{% endif %}">{{ label }}</a>{% endfor %}
+    </nav>
+  </div>
+</div>
+
+<div class="kap">
+  {% if rows %}
+    <table class="siralama">
+      <caption class="gizli">{{ period.label }} destekçi sıralaması</caption>
+      <thead><tr><th scope="col">Sıra</th><th scope="col">Destekçi</th><th scope="col" class="cubuk">Pay</th><th scope="col" class="lig-sutun">Unvan</th><th scope="col">Puan</th></tr></thead>
+      <tbody>
+        {% for row in rows %}
+          <tr{% if row.rank <= 3 %} class="ilk3"{% endif %}>
+            <td>{{ row.rank }}</td>
+            <td><div class="kim"><div class="avatar destekci" aria-hidden="true">{% if row.logo %}<img src="{{ row.logo.url }}" alt="">{% else %}{{ row.initials }}{% endif %}</div>
+              <div><a href="{{ row.get_absolute_url }}">{{ row.name }}</a><div class="kucuk soluk">{{ row.get_league_display }}, {{ row.supported }} proje</div></div></div></td>
+            <td class="cubuk"><div class="ilerleme" aria-hidden="true"><span data-yuzde="{{ row.share }}"></span></div></td>
+            <td class="lig-sutun">{% include "partials/title.html" with title=row.title %}</td>
+            <td><span class="puan">{{ row.total }}</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="bos"><p>Bu dönemde henüz puan kazanan destekçi yok.</p><a class="dugme altin" href="{% url 'projects:list' %}">İlk kanat sen ol</a></div>
+  {% endif %}
+</div>
+
+<section class="bolum kap" aria-labelledby="h-kural">
+  <div class="bolum-bas"><h2 id="h-kural">Puanlar nasıl hesaplanır?</h2>
+    <p>Kurallar herkese açık ve tek tiptir. Destekçi kendine puan yazamaz; yönetim, kurala aykırı kayıtları geçersiz kılar.</p></div>
+  <div class="iki-sutun">
+    <div class="kutu metin">
+      <table>
+        <thead><tr><th scope="col">Olay</th><th scope="col">Puan</th></tr></thead>
+        <tbody>
+          <tr><td>Takımın onayladığı her tamamlanan destek</td><td>{{ rules.base }}</td></tr>
+          <tr><td>Desteğin değeri: 12 × √(tutar ÷ 1000), en fazla {{ rules.value_cap }}</td><td>{% for v, p in rules.examples %}{{ v|tl }}: {{ p }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td></tr>
+          <tr><td>Daha önce hiç destek almamış bir takıma ilk desteği vermek</td><td>+{{ rules.first }}</td></tr>
+          <tr><td>Takım talebine {{ rules.fast_hours }} saat içinde yanıt vermek</td><td>+{{ rules.fast }}</td></tr>
+          <tr><td>Takımın 5 yıldızlı / 4 yıldızlı memnuniyeti</td><td>+15 / +8</td></tr>
+          <tr><td>Takımın onayladığı her mentörlük saati (aynı süreçte ayda en fazla {{ rules.mentor_cap }} saat sayılır)</td><td>{{ rules.mentor }} (oturum başına en fazla 40)</td></tr>
+          <tr><td>Ortak kanat: bir ihtiyacı başka destekçilerle birlikte karşılamak</td><td>+{{ rules.co_fund }}</td></tr>
+          <tr><td>Aynı takıma aynı yıl içinde 2. destek / 3. ve sonrası</td><td>yarım puan / puansız</td></tr>
+        </tbody>
+      </table>
+      <p>Karekök ölçeği bilinçli bir tercih: 100.000 ₺ veren bir kurum, 10.000 ₺ veren bir KOBİ'nin on katı değil, yaklaşık üç katı puan alır. Ayrıca mikro, KOBİ ve büyük kurumlar kendi liglerinde ayrıca sıralanır.</p>
+      <h3>Adil oyun</h3>
+      <p>Fırsat eşitliği bonusu yalnızca doğrulanmış takımlar için geçerlidir. Takım ve destekçi hesaplarının aynı ağdan girmesi, aynı e-posta alan adını kullanması, desteğin 24 saatten kısa sürede “tamamlanması” ya da doğrulanmamış bir takıma yüksek tutar gibi durumlarda puanlar silinmez ama yönetim onaylayana kadar incelemede bekler.</p>
+    </div>
+    <aside class="kutu">
+      <h3>Unvanlar</h3>
+      <ul class="liste">{% for floor, name, desc in titles %}<li><div class="buyut"><b>{{ name }}</b><div class="kucuk soluk">{{ desc }}</div></div><span class="sayi">{{ floor }}+</span></li>{% endfor %}</ul>
+      <a href="{% url 'rankings:awards' %}">Ödüller ve rozetler</a>
+    </aside>
+  </div>
+</section>
+{% endblock %}

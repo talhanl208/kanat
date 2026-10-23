@@ -1,0 +1,9 @@
+<div class="kutu">
+  <div class="guc">
+    <div class="uyum {% if strength.percent >= 80 %}guclu{% elif strength.percent < 50 %}zayif{% endif %}" data-uyum="{{ strength.percent }}" role="img" aria-label="Profil gücü yüzde {{ strength.percent }}"><b>%{{ strength.percent }}</b></div>
+    <div><h3>Profil gücü</h3><p class="kucuk soluk">{% if strength.missing %}Tamamladıkça eşleşmeler daha isabetli olur.{% else %}Profilin eksiksiz. Harika!{% endif %}</p></div>
+  </div>
+  {% if strength.missing %}
+    <ul class="yapilacak">{% for item in strength.missing|slice:":4" %}<li><a href="{{ item.url }}">{{ item.label }}</a></li>{% endfor %}</ul>
+  {% endif %}
+</div>

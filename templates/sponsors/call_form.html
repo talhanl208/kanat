@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{% if creating %}Yeni destek çağrısı{% else %}Çağrıyı düzenle{% endif %} — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>{% if creating %}Destek çağrısı aç{% else %}Çağrıyı düzenle{% endif %}</h1>
+  <p>Ne vereceğini, kaç takıma ve kimlere verebileceğini netleştir. Yayınladığında projesi bu çağrıya uyan takımlara haber veririz; başvuruları uyum puanına göre sıralı görürsün.</p>
+</div>
+<div class="kap orta">
+  <form class="form kutu" method="post" novalidate>{% csrf_token %}
+    {% include "partials/form_errors.html" %}
+    {% include "partials/field.html" with field=form.title %}
+    <div class="form-satir">{% include "partials/field.html" with field=form.kind %}{% include "partials/field.html" with field=form.slots %}{% include "partials/field.html" with field=form.deadline %}</div>
+    <div class="form-satir">{% include "partials/field.html" with field=form.amount_per_team %}{% include "partials/field.html" with field=form.mentor_hours %}</div>
+    {% include "partials/field.html" with field=form.description %}
+    {% include "partials/field.html" with field=form.categories yatay=1 %}
+    <div class="form-eylem"><button class="dugme altin" type="submit">{% if creating %}Çağrıyı yayınla{% else %}Kaydet{% endif %}</button>
+      {% if call %}<a href="{{ call.get_absolute_url }}">Vazgeç</a>{% endif %}</div>
+  </form>
+</div>
+{% endblock %}

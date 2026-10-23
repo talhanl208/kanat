@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ doc.title }} — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <h1>{{ doc.title|capfirst }}</h1>
+  <p class="kucuk soluk">Sürüm {{ doc.version }}, son güncelleme {{ doc.updated }}</p>
+</div>
+<div class="kap iki-sutun">
+  <article class="kutu metin">
+    {% if SITE.LEGAL_DRAFT_NOTICE %}<p class="uyari-kutu"><strong>Taslak metin.</strong> Bu metin bir şablondur ve yayına alınmadan önce bir hukukçu tarafından platformun gerçek işleyişine göre gözden geçirilmelidir. Köşeli parantez içindeki alanlar doldurulmalıdır.</p>{% endif %}
+    {% block legal %}{% endblock %}
+  </article>
+  <aside class="kutu">
+    <h3>Yasal metinler</h3>
+    <ul class="liste">{% for s, d in documents.items %}<li><a class="baslik" href="{% url 'core:legal' s %}"{% if s == slug %} aria-current="page"{% endif %}>{{ d.title|capfirst }}</a></li>{% endfor %}
+      <li><a class="baslik" href="{% url 'core:data_request' %}">KVKK başvuru formu</a></li></ul>
+  </aside>
+</div>
+{% endblock %}

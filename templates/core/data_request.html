@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}KVKK başvurusu — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>KVKK başvurusu</h1>
+  <p>KVKK'nın 11. maddesindeki haklarını kullanmak için bu formu doldur. Başvurun en geç 30 gün içinde, ücretsiz olarak yanıtlanır. Kimliğini doğrulamak için seninle iletişime geçebiliriz.</p>
+</div>
+<div class="kap orta">
+  <form class="form kutu" method="post" novalidate>
+    {% csrf_token %}
+    {% include "partials/form_errors.html" %}
+    <div class="form-satir">{% include "partials/field.html" with field=form.full_name %}{% include "partials/field.html" with field=form.email %}</div>
+    {% include "partials/field.html" with field=form.kind %}
+    {% include "partials/field.html" with field=form.message %}
+    {% include "partials/field.html" with field=form.identity_ack %}
+    <p class="kucuk soluk">Yazılı başvuru veya KEP ile başvuru hakkın da saklıdır: {{ SITE.DATA_CONTROLLER_ADDRESS }}{% if SITE.DATA_CONTROLLER_KEP %}, KEP: {{ SITE.DATA_CONTROLLER_KEP }}{% endif %}.</p>
+    <div class="form-eylem"><button class="dugme" type="submit">Başvuruyu gönder</button></div>
+  </form>
+</div>
+{% endblock %}

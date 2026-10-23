@@ -1,0 +1,11 @@
+{% load kanat_tags %}
+<li>
+  <div class="avatar destekci" aria-hidden="true">{% if sponsor.logo %}<img src="{{ sponsor.logo.url }}" alt="" loading="lazy" width="44" height="44">{% else %}{{ sponsor.initials }}{% endif %}</div>
+  <div class="buyut">
+    <a class="baslik" href="{{ sponsor.get_absolute_url }}">{{ sponsor.name }}</a>
+    {% if sponsor.verified %}<span class="etiket dogrulandi"><svg aria-hidden="true"><use href="#i-kalkan"/></svg>Doğrulandı</span>{% endif %}
+    <div class="kucuk soluk">{{ sponsor.sector }}, {{ sponsor.city }}</div>
+    {% if match %}<ul class="nedenler">{% for r in match.reasons|slice:":3" %}<li>{{ r }}</li>{% endfor %}</ul>{% endif %}
+  </div>
+  {% if match %}{% include "partials/score_ring.html" with match=match %}{% endif %}
+</li>

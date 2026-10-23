@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ team.name }} — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <div class="proje-ust">
+    <div class="avatar buyuk" aria-hidden="true">{% if team.logo %}<img src="{{ team.logo.url }}" alt="">{% else %}{{ team.initials }}{% endif %}</div>
+    <div><h1>{{ team.name }}</h1>{% if team.verified %}<span class="etiket dogrulandi"><svg aria-hidden="true"><use href="#i-kalkan"/></svg>Doğrulanmış takım</span>{% endif %}
+      <ul class="bilgi-satiri"><li><svg aria-hidden="true"><use href="#i-okul"/></svg>{{ team.institution }}</li><li><svg aria-hidden="true"><use href="#i-konum"/></svg>{{ team.city }}</li><li>{{ team.member_count }} kişi</li>{% if team.founded_year %}<li>Kuruluş {{ team.founded_year }}</li>{% endif %}</ul></div>
+  </div>
+</div>
+<div class="kap iki-sutun">
+  <div>
+    <section class="kutu"><h2>Takım</h2><div class="metin">{{ team.about|linebreaks }}</div>
+      {% if team.website %}<p><a href="{{ team.website }}" rel="nofollow noopener noreferrer" target="_blank">{{ team.website }}</a></p>{% endif %}</section>
+    <section class="bolum"><h2>Projeler</h2>
+      <div class="izgara">{% for project in projects %}{% include "partials/project_card.html" %}{% empty %}<p class="soluk">Henüz proje yok.</p>{% endfor %}</div></section>
+  </div>
+  <aside>{% if team.has_minor_members %}<div class="kutu kucuk">Bu takımda reşit olmayan üyeler var. Hesap, danışman tarafından yönetilir{% if team.advisor_name %} ({{ team.advisor_name }}){% endif %}.</div>{% endif %}</aside>
+</div>
+{% endblock %}

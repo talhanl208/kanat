@@ -1,0 +1,8 @@
+{% autoescape off %}Merhaba,
+
+Bu e-posta adresiyle Kanat'ta yeni bir hesap açılmak istendi, ancak adresin zaten kayıtlı.
+Parolanı hatırlamıyorsan buradan sıfırlayabilirsin:
+
+{{ link }}
+
+Bu işlemi sen yapmadıysan bu e-postayı yok sayabilirsin; hesabında hiçbir değişiklik yapılmadı.{% endautoescape %}

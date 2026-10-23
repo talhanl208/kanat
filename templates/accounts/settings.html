@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Hesap ve gizlilik — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>Hesap ve gizlilik</h1>
+  <p>Verilerin senin. Buradan indirebilir, düzeltebilir veya tamamen silebilirsin.</p>
+</div>
+<div class="kap orta">
+  <section class="kutu" aria-labelledby="h-bilgi">
+    <h2 id="h-bilgi">Bilgilerin</h2>
+    <p class="soluk">E-posta: {{ user.email }} {% if user.email_verified %}<span class="etiket dogrulandi">Doğrulandı</span>{% endif %}
+      · <a href="{% url 'accounts:email_change' %}">Değiştir</a></p>
+    {% if not user.email_verified %}
+      <form method="post" action="{% url 'accounts:resend_verification' %}">{% csrf_token %}<button class="dugme ikincil kucuk" type="submit">Doğrulama bağlantısını yeniden gönder</button></form>
+    {% endif %}
+    <form class="form" method="post">
+      {% csrf_token %}
+      {% include "partials/field.html" with field=profile_form.full_name %}
+      <div class="form-eylem"><button class="dugme kucuk" type="submit" name="profile" value="1">Kaydet</button>
+        <a href="{% url 'accounts:password_change' %}">Parolamı değiştir</a></div>
+    </form>
+  </section>
+
+  <section class="kutu" aria-labelledby="h-guvenlik">
+    <div class="kutu-bas"><h2 id="h-guvenlik">Güvenlik</h2>
+      {% if user.totp_enabled %}<span class="durum anlasma">İki adımlı doğrulama açık</span>{% else %}<span class="durum beklemede">İki adımlı doğrulama kapalı</span>{% endif %}</div>
+    <p class="soluk">Giriş yaparken parolanın yanında telefonundaki doğrulama uygulamasından bir kod istenir.{% if user.is_staff %} Yönetim paneli için zorunludur.{% endif %}</p>
+    <a class="dugme ikincil kucuk" href="{% url 'accounts:two_factor' %}">{% if user.totp_enabled %}Yönet{% else %}İki adımlı doğrulamayı aç{% endif %}</a>
+    {% if user.is_sponsor or user.is_team_captain %}<a class="dugme ikincil kucuk" href="{% url 'core:verification' %}">Doğrulanmış rozet</a>{% endif %}
+  </section>
+
+  <section class="kutu" id="bildirim" aria-labelledby="h-bildirim">
+    <h2 id="h-bildirim">Bildirimler</h2>
+    <p class="soluk">Bildirimler her zaman sitede (zil simgesi) görünür. Mesaj e-postaları seyreltilir: aynı yazışma için yarım saatte en fazla bir e-posta.</p>
+    <form class="form" method="post">
+      {% csrf_token %}
+      {% include "partials/field.html" with field=notif_form.email_notifications %}
+      <div class="form-eylem"><button class="dugme kucuk" type="submit" name="notifications" value="1">Tercihimi kaydet</button></div>
+    </form>
+  </section>
+
+  <section class="kutu" aria-labelledby="h-riza">
+    <h2 id="h-riza">İletişim izinleri</h2>
+    <p class="soluk">Açık rızanı dilediğin an geri alabilirsin; geri almak hesabını hiçbir şekilde etkilemez.</p>
+    <form class="form" method="post">
+      {% csrf_token %}
+      {% include "partials/field.html" with field=consent_form.marketing %}
+      <div class="form-eylem"><button class="dugme kucuk" type="submit" name="consent" value="1">Tercihimi kaydet</button></div>
+    </form>
+  </section>
+
+  <section class="kutu" aria-labelledby="h-kayit">
+    <h2 id="h-kayit">Onay geçmişin</h2>
+    <ul class="liste">
+      {% for c in consents %}
+        <li><div class="buyut">{{ c.get_kind_display }} <span class="soluk kucuk">sürüm {{ c.version }}</span></div>
+          <span class="durum {% if c.granted %}anlasma{% else %}red{% endif %}">{% if c.granted %}Verildi{% else %}Geri alındı{% endif %}</span>
+          <span class="kucuk soluk">{{ c.created_at|date:"d.m.Y H:i" }}</span></li>
+      {% empty %}<li class="soluk">Kayıt yok.</li>{% endfor %}
+    </ul>
+  </section>
+
+  <section class="kutu" aria-labelledby="h-veri">
+    <h2 id="h-veri">Verilerim</h2>
+    <p>KVKK'nın 11. maddesi kapsamındaki haklarını kullanabilirsin.</p>
+    <div class="form-eylem">
+      <a class="dugme ikincil" href="{% url 'accounts:export' %}">Verilerimi indir (JSON)</a>
+      <a class="dugme ikincil" href="{% url 'core:data_request' %}">KVKK başvurusu yap</a>
+      <a class="dugme tehlike" href="{% url 'accounts:delete' %}">Hesabımı kapat</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

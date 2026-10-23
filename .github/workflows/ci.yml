@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_DEBUG: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Bağımlılıklar
+        run: pip install -r requirements-dev.txt
+      - name: Sistem kontrolleri ve eksik migration
+        run: |
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+      - name: Testler
+        run: python manage.py test
+      - name: Üretim güvenlik kontrolü
+        env:
+          DJANGO_DEBUG: "0"
+          DJANGO_SECRET_KEY: ci-only-${{ github.run_id }}-not-a-real-secret-key-0123456789abcdef
+          DJANGO_ALLOWED_HOSTS: ornek.com
+          KANAT_SITE_URL: https://ornek.com
+        run: python manage.py check --deploy --fail-level ERROR
+
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_DEBUG: "1"
+      KANAT_E2E: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: python -m playwright install --with-deps chromium
+      - name: Tarayıcı testleri (CSP ihlali, mobil taşma, 2FA girişi)
+        run: python manage.py test apps.core.tests_e2e
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: İmaj derlenebiliyor mu?
+        run: docker build -t kanat:ci .
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install bandit pip-audit
+      - name: Bandit (kod güvenlik taraması)
+        run: bandit -r apps config -x "*/tests*.py,*/testutils.py,*/migrations/*" -ll
+      - name: pip-audit (bilinen açıklı bağımlılık var mı?)
+        run: pip-audit -r requirements.txt
+      - name: Depoda sır var mı?
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

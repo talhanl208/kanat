@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Sponsorluk sözleşmesi — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>Sponsorluk sözleşmesi</h1>
+  <p>{{ agreement.team_name }} ile {{ agreement.sponsor_name }} arasında, “{{ agreement.project_title }}” projesi için.</p>
+</div>
+<div class="kap orta">
+  <div class="sozlesme" tabindex="0" aria-label="Sözleşme metni">{{ agreement.body }}</div>
+  <p class="ozet-kod">Metin özeti (SHA-256): {{ agreement.body_hash }}<br>Şablon sürümü {{ agreement.template_version }}</p>
+
+  <div class="onay-durumu">
+    <div class="{% if agreement.team_approved_at %}onayli{% endif %}"><b>{{ agreement.team_name }}</b><br><span class="kucuk">{% if agreement.team_approved_at %}{{ agreement.team_approved_at|date:"d M Y H:i" }} tarihinde onayladı{% else %}Onay bekleniyor{% endif %}</span></div>
+    <div class="{% if agreement.sponsor_approved_at %}onayli{% endif %}"><b>{{ agreement.sponsor_name }}</b><br><span class="kucuk">{% if agreement.sponsor_approved_at %}{{ agreement.sponsor_approved_at|date:"d M Y H:i" }} tarihinde onayladı{% else %}Onay bekleniyor{% endif %}</span></div>
+  </div>
+
+  {% if not my_approval and req.status == 'kabul' and not can_approve %}
+    <p class="uyari-kutu bolum-ust yazdirma-gizle">Sözleşmeyi takım adına kaptan onaylar.</p>
+  {% endif %}
+  {% if not my_approval and req.status == 'kabul' and can_approve %}
+    <form class="form kutu yazdirma-gizle bolum-ust" method="post" action="{% url 'matching:agreement_approve' req.pk %}">
+      {% csrf_token %}
+      <input type="hidden" name="body_hash" value="{{ agreement.body_hash }}">
+      <h2>Onayla</h2>
+      <p class="soluk">Onayın; tarih, saat ve takma adlandırılmış bağlantı bilgisiyle kayda geçer. Önemli tutarlar için ayrıca ıslak imzalı ya da e-imzalı bir nüsha düzenlemenizi öneririz.</p>
+      {% include "partials/field.html" with field=confirm_form.password %}
+      <div class="form-eylem"><button class="dugme" type="submit">Okudum, onaylıyorum</button></div>
+    </form>
+  {% endif %}
+  <div class="form-eylem yazdirma-gizle bolum-ust"><a class="dugme ikincil" href="{{ req.get_absolute_url }}">Sürece dön</a><span class="kucuk soluk">Yazdırmak için tarayıcının yazdır komutunu kullan.</span></div>
+</div>
+{% endblock %}

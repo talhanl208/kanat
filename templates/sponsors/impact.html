@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load kanat_tags %}
+{% block title %}{{ year }} etki raporu — {{ sponsor.name }}{% endblock %}
+{% block content %}
+<div class="kap yazdirma-gizle bolum-ust">
+  <div class="form-eylem">
+    <nav class="sekmeler" aria-label="Yıl">{% for y in years %}<a href="?yil={{ y }}" aria-current="{% if y == year %}true{% else %}false{% endif %}">{{ y }}</a>{% endfor %}</nav>
+    <button class="dugme ikincil kucuk" type="button" data-yazdir>Yazdır / PDF olarak kaydet</button>
+  </div>
+  <p class="kucuk soluk">Bu rapor yalnızca sana görünür. Kurumsal sosyal sorumluluk raporlarında ve sunumlarda kullanabilirsin.</p>
+</div>
+<article class="rapor">
+  <header class="rapor-bas">
+    <p>{{ SITE.SITE_NAME }} etki raporu</p>
+    <h1>{{ sponsor.name }}, {{ year }}</h1>
+    <p>Geleceğin yönünü değiştiren hayatlara verdiğin destek, rakamlarla.</p>
+    <span class="gokturk" aria-hidden="true">𐰴𐰣𐱃</span>
+  </header>
+  <div class="rapor-govde">
+    {% if completed %}
+      <div class="rakamlar">
+        <div><b>{{ completed|length }}</b><span>tamamlanan destek</span></div>
+        <div><b>{{ team_count }}</b><span>takım</span></div>
+        <div><b>{{ cities|length }}</b><span>şehir</span></div>
+        {% if total_value %}<div><b>{{ total_value|tl }}</b><span>toplam destek değeri</span></div>{% endif %}
+        {% if mentor_hours %}<div><b>{{ mentor_hours|floatformat:"-1" }}</b><span>saat onaylı mentörlük</span></div>{% endif %}
+        {% if first_time %}<div><b>{{ first_time }}</b><span>takıma ilk desteğini sen verdin</span></div>{% endif %}
+        {% if co_funded %}<div><b>{{ co_funded }}</b><span>ihtiyacı başka destekçilerle ortak karşıladın</span></div>{% endif %}
+        {% if avg_rating %}<div><b>{{ avg_rating }}/5</b><span>takımların ortalama memnuniyeti</span></div>{% endif %}
+      </div>
+      <div class="iki-sutun-esit">
+        <section><h2>Şehirler</h2>
+          <ul class="dagilim">{% for name, n, pct in cities %}<li><span>{{ name }}</span><div class="ilerleme" aria-hidden="true"><span data-yuzde="{{ pct }}"></span></div><span class="sayi">{{ n }}</span></li>{% endfor %}</ul></section>
+        <section><h2>Alanlar</h2>
+          <ul class="dagilim">{% for name, n, pct in categories %}<li><span>{{ name }}</span><div class="ilerleme" aria-hidden="true"><span data-yuzde="{{ pct }}"></span></div><span class="sayi">{{ n }}</span></li>{% endfor %}</ul></section>
+      </div>
+      <section><h2>Desteklediğin projeler</h2>
+        <ul class="liste">{% for r in completed %}<li><div class="buyut"><b>{{ r.project.title }}</b><div class="kucuk soluk">{{ r.project.team.name }}, {{ r.project.team.city }} · {{ r.get_kind_display }}</div></div><span class="kucuk">{% if r.delivered_value %}{{ r.delivered_value|tl }}{% endif %}</span><span class="kucuk soluk">{{ r.completed_at|date:"d M" }}</span></li>{% endfor %}</ul>
+      </section>
+      {% if thanks %}
+        <section><h2>Takımlardan</h2>
+          <div class="notlar">{% for t in thanks %}<figure class="not"><blockquote>“{{ t.thanks_note }}”</blockquote><figcaption><b>{{ t.project.team.name }}</b></figcaption></figure>{% endfor %}</div>
+        </section>
+      {% endif %}
+      {% if awards %}<section><h2>Ödüller</h2><ul class="liste">{% for a in awards %}<li><b>{{ a.get_kind_display }}</b><span class="soluk kucuk">{{ a.period_label }}, {{ a.rank }}. sıra · doğrulama kodu {{ a.code }}</span></li>{% endfor %}</ul></section>{% endif %}
+    {% else %}
+      <div class="bos"><p>{{ year }} yılında henüz tamamlanan bir destek yok. İlk teslimden sonra raporun burada şekillenir.</p><a class="dugme" href="{% url 'projects:list' %}">Projeleri keşfet</a></div>
+    {% endif %}
+    <p class="kucuk soluk">Rapor {{ generated|date:"d.m.Y H:i" }} tarihinde, takımların onayladığı teslimlerden oluşturuldu. Toplam {{ points }} Kanat puanı.</p>
+  </div>
+</article>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% autoescape off %}Merhaba {{ user.full_name }},
+
+Kanat hesabını etkinleştirmek için aşağıdaki bağlantıya tıkla (3 gün geçerli):
+
+{{ link }}
+
+Bu kaydı sen yapmadıysan bu e-postayı yok sayabilirsin.
+
+Kanat — Geleceğin Yönünü Değiştiren Hayatlar{% endautoescape %}

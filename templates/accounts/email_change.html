@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}E-posta adresini değiştir — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap dar sayfa-bas">
+  <h1>E-posta adresini değiştir</h1>
+  <p>Yeni adresine bir onay bağlantısı göndereceğiz. Bağlantıya tıklayana kadar mevcut adresin geçerli kalır; değişince eski adresine de bilgi veririz.</p>
+</div>
+<div class="kap dar">
+  <form class="form kutu" method="post" novalidate>{% csrf_token %}
+    {% include "partials/field.html" with field=form.new_email %}
+    {% include "partials/field.html" with field=form.password %}
+    <div class="form-eylem"><button class="dugme" type="submit">Onay bağlantısı gönder</button><a href="{% url 'accounts:settings' %}">Vazgeç</a></div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load kanat_tags %}
+{% block title %}{{ req.project.title }} ↔ {{ req.sponsor.name }} — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <ul class="bilgi-satiri"><li><span class="durum {{ req.status }}">{{ req.get_status_display }}</span></li><li>{{ req.get_initiated_by_display }} başlattı, {{ req.created_at|date:"d M Y" }}</li></ul>
+  <h1>{{ req.project.title }}</h1>
+  <p><a href="{{ req.project.get_absolute_url }}">{{ req.project.team.name }}</a> ile <a href="{{ req.sponsor.get_absolute_url }}">{{ req.sponsor.name }}</a> arasındaki destek süreci</p>
+</div>
+<div class="kap iki-sutun">
+  <div>
+    <section class="kutu">
+      <h2>Talep</h2>
+      <ul class="bilgi-satiri">
+        <li><span class="etiket {{ req.kind }}">{{ req.get_kind_display }}</span></li>
+        {% if req.amount %}<li>Tahmini değer {{ req.amount|tl }}</li>{% endif %}
+        {% if req.mentor_hours %}<li>{{ req.mentor_hours }} saat</li>{% endif %}
+        {% if req.need %}<li>İhtiyaç: {{ req.need.title }}{% if req.need.estimated_cost %} ({{ req.need.estimated_cost|tl }}){% endif %}</li>{% endif %}
+        {% if req.call %}<li>Çağrı: <a href="{{ req.call.get_absolute_url }}">{{ req.call.title }}</a></li>{% endif %}
+      </ul>
+      {% if block %}<div class="uyari-kutu mercan kucuk">Bu takım ile destekçi arasında engelleme var; yeni talep ve mesaj gönderilemez.{% if can_unblock %}
+        <form method="post" action="{% url 'matching:unblock' req.pk %}">{% csrf_token %}<button class="metin-dugme" type="submit">Engeli kaldır</button></form>{% endif %}</div>{% endif %}
+      <div class="metin">{{ req.note|linebreaks }}</div>
+      {% if can_respond %}
+        <form class="form-eylem" method="post" action="{% url 'matching:respond' req.pk %}">
+          {% csrf_token %}
+          <button class="dugme" name="karar" value="kabul" type="submit">Kabul et</button>
+          <button class="dugme ikincil" name="karar" value="red" type="submit">Kibarca reddet</button>
+        </form>
+      {% elif req.status == 'beklemede' %}
+        <p class="uyari-kutu kucuk">Karşı tarafın yanıtı bekleniyor.</p>
+      {% endif %}
+      {% if can_withdraw %}
+        <form method="post" action="{% url 'matching:withdraw' req.pk %}" data-onay="Talebi geri çekmek istediğine emin misin?">{% csrf_token %}<button class="metin-dugme" type="submit">Talebi geri çek</button></form>
+      {% endif %}
+    </section>
+
+    {% if req.status == 'kabul' or agreement %}
+      <section class="kutu" aria-labelledby="h-sozlesme">
+        <div class="kutu-bas"><h2 id="h-sozlesme">Sponsorluk sözleşmesi</h2>
+          {% if agreement %}<span class="durum {% if agreement.fully_approved %}anlasma{% else %}beklemede{% endif %}">{% if agreement.fully_approved %}İki taraf onayladı{% else %}Onay bekliyor{% endif %}</span>{% endif %}</div>
+        {% if agreement %}
+          <p>{{ agreement.support_summary }}</p>
+          <div class="form-eylem">
+            <a class="dugme" href="{% url 'matching:agreement' req.pk %}">Sözleşmeyi oku{% if not agreement.fully_approved %} ve onayla{% endif %}</a>
+            {% if req.status == 'kabul' and side == 'destekci' or req.status == 'kabul' and is_captain %}<a class="dugme ikincil" href="{% url 'matching:agreement_edit' req.pk %}">Düzenle</a>{% endif %}
+          </div>
+        {% else %}
+          <p class="soluk">Hazır şablon, iki tarafın yükümlülüklerini ve ödeme kanalını netleştirir. Bilgileri doldur, iki taraf da parolasıyla onaylasın.</p>
+          {% if side == 'destekci' or is_captain %}<a class="dugme" href="{% url 'matching:agreement_edit' req.pk %}">Sözleşmeyi hazırla</a>
+          {% else %}<p class="kucuk soluk">Sözleşmeyi takım kaptanı ya da destekçi hazırlar.</p>{% endif %}
+        {% endif %}
+      </section>
+    {% endif %}
+
+    {% if req.status == 'anlasma' and side == 'takim' %}
+      <section class="kutu uyari-kutu turkuaz">
+        <h2>Destek ulaştı mı?</h2>
+        <p>Teslim aldığında onayla ve bir teşekkür bırak. Destekçin Kanat puanını ancak senin onayınla kazanır.</p>
+        {% if is_captain %}<a class="dugme" href="{% url 'matching:complete' req.pk %}">Teslim aldık, teşekkür et</a>
+        {% else %}<p class="kucuk soluk">Teslim onayını takım kaptanı verir.</p>{% endif %}
+      </section>
+    {% endif %}
+    {% if req.status == 'tamamlandi' %}
+      <section class="kutu">
+        <h2>Tamamlandı</h2>
+        <ul class="bilgi-satiri">{% if req.delivered_value %}<li>{{ req.delivered_value|tl }} değerinde destek</li>{% endif %}{% if req.rating %}<li>Memnuniyet {{ req.rating }}/5</li>{% endif %}<li>{{ req.completed_at|date:"d M Y" }}</li></ul>
+        {% if req.thanks_note %}<figure class="not"><blockquote>“{{ req.thanks_note }}”</blockquote><figcaption>{{ req.project.team.name }}</figcaption></figure>{% endif %}
+      </section>
+    {% endif %}
+
+    {% if req.kind == 'mentorluk' and req.status == 'anlasma' or req.kind == 'mentorluk' and req.status == 'tamamlandi' %}
+      <section class="kutu" id="mentorluk" aria-labelledby="h-mentor">
+        <h2 id="h-mentor">Mentörlük oturumları</h2>
+        <p class="kucuk soluk">Destekçi oturumu kaydeder, takım onaylar. Onaylı her saat 10 puan (oturum başına en fazla 40).</p>
+        <ul class="liste">{% for s in sessions %}
+          <li><div class="buyut"><b>{{ s.topic }}</b><div class="kucuk soluk">{{ s.date|date:"d M Y" }}, {{ s.hours }} saat</div></div>
+            {% if s.confirmed_at %}<span class="durum anlasma">Onaylandı</span>
+            {% elif side == 'takim' and is_captain %}<form method="post" action="{% url 'matching:session_confirm' req.pk s.pk %}">{% csrf_token %}<button class="dugme kucuk" type="submit">Onayla</button></form>
+            {% else %}<span class="durum beklemede">Takım onayı bekleniyor</span>{% endif %}</li>
+        {% empty %}<li class="soluk">Henüz oturum kaydı yok.</li>{% endfor %}</ul>
+        {% if side == 'destekci' %}
+          <form class="form" method="post" action="{% url 'matching:session_add' req.pk %}">{% csrf_token %}
+            <div class="form-satir">{% include "partials/field.html" with field=session_form.date %}{% include "partials/field.html" with field=session_form.hours %}{% include "partials/field.html" with field=session_form.topic %}</div>
+            <div class="form-eylem"><button class="dugme ikincil kucuk" type="submit">Oturumu kaydet</button></div></form>
+        {% endif %}
+      </section>
+    {% endif %}
+
+    <section class="kutu" id="mesajlar" aria-labelledby="h-mesaj">
+      <h2 id="h-mesaj">Mesajlar</h2>
+      <div class="yazisma">
+        {% for m in thread %}
+          <div class="balon{% if m.sender_id == user.pk %} benim{% endif %}"><p>{{ m.body }}</p><small>{% if m.sender_id == user.pk %}Sen{% elif m.sender_id == req.sponsor.owner_id %}{{ req.sponsor.name }}{% elif m.sender_id in team_member_ids %}{{ m.sender.get_short_name }}, {{ req.project.team.name }}{% else %}Eski üye{% endif %}, {{ m.created_at|date:"d M H:i" }}</small></div>
+        {% empty %}<p class="soluk">Henüz mesaj yok. İlk mesajı sen yaz.</p>{% endfor %}
+      </div>
+      {% if can_message %}
+        <form class="form" method="post" action="{% url 'matching:message' req.pk %}">
+          {% csrf_token %}
+          {{ message_form.body }}
+          <div class="form-eylem"><button class="dugme" type="submit">Gönder</button><span class="kucuk soluk">Kişisel veri (telefon, adres, kimlik no) paylaşma.</span></div>
+        </form>
+      {% endif %}
+    </section>
+  </div>
+
+  <aside>
+    <div class="kutu">
+      <div class="kutu-bas"><h3>Uyum</h3>{% include "partials/score_ring.html" with buyuk=1 %}</div>
+      <ul class="nedenler">{% for r in match.reasons %}<li>{{ r }}</li>{% endfor %}</ul>
+      <p class="kucuk soluk">Uyum puanı kural tabanlı bir öneridir; karar her zaman tarafların kendisine aittir.</p>
+    </div>
+    <details class="kutu">
+      <summary>Bir sorun mu var? Şikâyet et ya da engelle</summary>
+      <form class="form" method="post" action="{% url 'matching:report' req.pk %}">{% csrf_token %}
+        {% include "partials/field.html" with field=report_form.reason %}
+        {% include "partials/field.html" with field=report_form.detail %}
+        <button class="dugme tehlike kucuk" type="submit">Şikâyeti gönder</button></form>
+      {% if not block %}{% if side == 'destekci' or is_captain %}
+        <form class="bolum-ust" method="post" action="{% url 'matching:block' req.pk %}" data-onay="Karşı tarafı engellersen yeni talep ve mesaj gönderilemez; bekleyen talepler kapanır.">{% csrf_token %}
+          <button class="dugme ikincil kucuk" type="submit">{% if side == 'destekci' %}Bu takımı{% else %}Bu destekçiyi{% endif %} engelle</button></form>
+      {% endif %}{% endif %}
+    </details>
+  </aside>
+</div>
+{% endblock %}

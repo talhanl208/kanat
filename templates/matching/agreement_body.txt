@@ -1,0 +1,49 @@
+{% autoescape off %}SPONSORLUK VE DESTEK SÖZLEŞMESİ
+(Kanat platformu şablonu, sürüm {{ version }})
+
+MADDE 1 — TARAFLAR
+1.1. Destek alan: {{ team.name }} ({{ team.get_kind_display }}), {{ team.institution }}, {{ team.city }}. Bu taraf aşağıda "Takım" olarak anılacaktır.{% if team.has_minor_members %} Takımda reşit olmayan üyeler bulunduğundan Takım adına bu sözleşmeyi, Takım'ın yetişkin sorumlusu/danışmanı{% if team.advisor_name %} ({{ team.advisor_name }}){% endif %} onaylar.{% endif %}
+1.2. Destek veren: {{ sponsor.name }} ({{ sponsor.get_kind_display }}), {{ sponsor.city }}. Bu taraf aşağıda "Destekçi" olarak anılacaktır.
+
+MADDE 2 — KONU
+2.1. Bu sözleşmenin konusu, Destekçi'nin "{{ project.title }}" projesine ({{ project.get_competition_display }}{% if project.competition_detail %}: {{ project.competition_detail }}{% endif %}) aşağıda belirtilen desteği sağlaması ve tarafların bu kapsamdaki hak ve yükümlülüklerinin belirlenmesidir.
+
+MADDE 3 — DESTEĞİN KAPSAMI
+3.1. {{ a.support_summary }}
+3.2. Ödeme / teslim kanalı: {{ a.payment_channel }}
+3.3. Kanat platformu para veya ürün transferine aracılık etmez, ödeme almaz ve tutmaz. Desteğin teslimi doğrudan taraflar arasında gerçekleşir.
+
+MADDE 4 — TAKIMIN YÜKÜMLÜLÜKLERİ
+4.1. {{ a.team_obligations }}
+4.2. Takım, desteği yalnızca projenin amacına uygun ve hukuka uygun biçimde kullanır.
+4.3. Takım, desteği teslim aldığında bunu platform üzerinden onaylar.
+
+MADDE 5 — DESTEKÇİNİN YÜKÜMLÜLÜKLERİ
+5.1. {{ a.sponsor_obligations }}
+5.2. Destekçi, desteği yarışma kurallarına aykırı bir koşula bağlamaz ve projenin teknik kararlarına müdahale hakkı talep etmez.
+
+MADDE 6 — FİKRİ VE SINAİ HAKLAR
+6.1. Projeye ilişkin tüm fikri ve sınai haklar Takım'a (ve varsa bağlı olduğu kuruma) aittir. Bu sözleşme Destekçi'ye proje üzerinde herhangi bir hak devri ya da lisans sağlamaz.
+6.2. Takım, Destekçi'nin adını ve logosunu yalnızca sözleşme süresince ve proje tanıtımı amacıyla kullanabilir. Destekçi, Takım'ın adını ve proje görsellerini yalnızca "destekçisiyiz" bilgisini vermek amacıyla ve Takım'ın onayıyla kullanabilir.
+
+MADDE 7 — KİŞİSEL VERİLER
+7.1. Taraflar, birbirlerinden edindikleri kişisel verileri 6698 sayılı Kişisel Verilerin Korunması Kanunu'na uygun olarak, yalnızca bu sözleşmenin ifası için ve gerektiği kadar işler. Her taraf kendi işlemesinden bağımsız veri sorumlusudur.
+7.2. Destekçi, Takım üyelerinin (özellikle reşit olmayan üyelerin) kimlik, iletişim veya görsel verilerini talep etmez; iletişimi platform veya Takım sorumlusu üzerinden yürütür.
+
+MADDE 8 — GİZLİLİK
+8.1. Taraflar, karşı tarafın açıkça gizli olarak bildirdiği teknik ve ticari bilgileri üçüncü kişilerle paylaşmaz. Bu yükümlülük sözleşmenin sona ermesinden sonra iki yıl devam eder.
+
+MADDE 9 — SÜRE VE FESİH
+9.1. Sözleşme {{ a.start_date|date:"d.m.Y" }} tarihinde başlar, {{ a.end_date|date:"d.m.Y" }} tarihinde sona erer.
+9.2. Taraflardan biri yükümlülüklerini esaslı biçimde yerine getirmezse, karşı taraf yazılı bildirimle sözleşmeyi feshedebilir. Teslim edilmiş destekler, aksi kararlaştırılmadıkça iade edilmez.
+
+MADDE 10 — VERGİ VE MEVZUAT
+10.1. Bağış, sponsorluk harcaması ve benzeri işlemlerin vergisel sonuçları ile belgelendirilmesi taraflarca ve gerekiyorsa mali müşavirleri aracılığıyla değerlendirilir. Platform bu konuda danışmanlık vermez.
+
+MADDE 11 — PLATFORMUN ROLÜ
+11.1. Kanat bu sözleşmenin tarafı değildir; tarafları buluşturan ve onay kayıtlarını saklayan bir araçtır. Desteğin teslimi, niteliği veya kullanımından doğan uyuşmazlıklardan platform sorumlu tutulamaz.
+
+MADDE 12 — UYGULANACAK HUKUK VE ONAY
+12.1. Bu sözleşmeye Türk hukuku uygulanır. Uyuşmazlıklarda öncelikle uzlaşma yoluna başvurulur.
+12.2. Taraflar bu metni platform üzerinde parolalarıyla onaylamıştır. Onay zamanları ve metnin değişmediğini gösteren SHA-256 özeti kayıt altındadır. Taraflar dilerlerse bu metni ıslak imza veya güvenli elektronik imza ile ayrıca imzalayabilir; yüksek tutarlı desteklerde bu önerilir.
+{% endautoescape %}

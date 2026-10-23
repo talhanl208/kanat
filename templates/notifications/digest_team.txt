@@ -1,0 +1,14 @@
+{% autoescape off %}Merhaba {{ user.get_short_name }},
+
+"{{ project.title }}" projen için bu haftanın fırsatları:
+{% if calls %}
+Yeni destek çağrıları
+{% for c in calls %}- {{ c.title }} ({{ c.sponsor.name }}), son başvuru {{ c.deadline|date:"d.m.Y" }}
+  {{ base }}{{ c.get_absolute_url }}
+{% endfor %}{% endif %}{% if sponsors %}
+Aramıza yeni katılan ve projene uyan destekçiler
+{% for s, m in sponsors %}- {{ s.name }} ({{ s.sector }}) — uyum %{{ m.score }}
+  {{ base }}{{ s.get_absolute_url }}
+{% endfor %}{% endif %}
+--
+Bu özeti kapatmak için: {{ unsubscribe }}{% endautoescape %}

@@ -1,0 +1,180 @@
+{% load static kanat_tags %}<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ SITE.SITE_NAME }} — {{ SITE.SITE_TAGLINE }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}TEKNOFEST, TÜBİTAK ve benzeri yarışmalardaki takımları; maddi destek, malzeme, üretim ve mentörlük sunan destekçilerle ihtiyaca göre eşleştiren platform.{% endblock %}">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0A1640">
+  <meta name="referrer" content="same-origin">
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preload" href="{% static 'fonts/onest-latin-400-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{% static 'fonts/unbounded-latin-500-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{% static 'css/kanat.css' %}">
+  {# Tema tercihini ilk boyamadan önce uygula — nonce'lu, CSP ile uyumlu #}
+  <script nonce="{{ csp_nonce }}">try{var t=localStorage.getItem("kanat-tema");if(t==="dark"||t==="light"){document.documentElement.setAttribute("data-theme",t)}}catch(e){}</script>
+  <script src="{% static 'js/kanat.js' %}" defer></script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+  {% include "partials/icons.html" %}
+  <a class="atla" href="#icerik">İçeriğe geç</a>
+
+  <header class="ust-serit">
+    <div class="kap">
+      <a class="marka" href="{% url 'core:home' %}" aria-label="{{ SITE.SITE_NAME }} ana sayfa">
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <rect width="40" height="40" rx="10" fill="#0A1640"/>
+          <g class="marka-yildiz" fill="none" stroke="#14B3AD" stroke-width="2.2" stroke-linejoin="round">
+            <rect x="10.5" y="10.5" width="19" height="19" rx="1.5"/>
+            <rect x="10.5" y="10.5" width="19" height="19" rx="1.5" transform="rotate(45 20 20)"/>
+          </g>
+          <circle cx="20" cy="20" r="4.2" fill="#E8BC57"/>
+        </svg>
+        {{ SITE.SITE_NAME }}
+      </a>
+      <nav aria-label="Ana menü">
+        <ul class="ana-menu">
+          <li><a href="{% url 'projects:list' %}" {% aktif '/projeler/' %}>Projeler</a></li>
+          <li><a href="{% url 'sponsors:list' %}" {% aktif '/destekciler/' '/destekciler/cagrilar/' %}>Destekçiler</a></li>
+          <li><a href="{% url 'sponsors:calls' %}" {% aktif '/destekciler/cagrilar/' %}>Çağrılar</a></li>
+          <li><a href="{% url 'rankings:leaderboard' %}" {% aktif '/siralama/' %}>Sıralama</a></li>
+          <li><a href="{% url 'core:about' %}" {% aktif '/hakkinda/' %}>Nasıl işler?</a></li>
+        </ul>
+      </nav>
+      <div class="sag">
+        <button class="ikon-dugme" type="button" data-tema-degistir aria-label="Açık / koyu tema" aria-pressed="false">
+          <svg class="tema-gunes" aria-hidden="true"><use href="#i-ay"/></svg>
+          <svg class="tema-ay" aria-hidden="true"><use href="#i-gunes"/></svg>
+        </button>
+        {% if user.is_authenticated %}
+          <a class="ikon-dugme" href="{% url 'matching:inbox' %}" aria-label="Eşleşmelerim">
+            <svg aria-hidden="true"><use href="#i-mesaj"/></svg>
+          </a>
+          <a class="ikon-dugme zil{% if unread_notifications %} var{% endif %}" href="{% url 'notifications:list' %}" aria-label="Bildirimler{% if unread_notifications %}, {{ unread_notifications }} okunmamış{% endif %}">
+            <svg aria-hidden="true"><use href="#i-zil"/></svg>
+            {% if unread_notifications %}<span class="rozet-sayi" aria-hidden="true">{% if unread_notifications > 9 %}9+{% else %}{{ unread_notifications }}{% endif %}</span>{% endif %}
+          </a>
+          <details class="kullanici-menu">
+            <summary class="ikon-dugme" aria-label="Hesap menüsü"><svg aria-hidden="true"><use href="#i-kullanici"/></svg></summary>
+            <div class="acilir">
+              <p class="menu-kim"><b>{{ user.full_name }}</b><span>{{ user.email }}</span></p>
+              <a href="{% url 'core:dashboard' %}">Panelim</a>
+              {% if user.is_team %}
+                {% if user.is_team_captain or not user.team_or_none %}<a href="{% url 'projects:team_edit' %}">Takım profilim</a>{% endif %}
+                {% if user.team_or_none %}<a href="{% url 'projects:members' %}">Takım üyeleri</a>{% endif %}
+                <a href="{% url 'projects:create' %}">Yeni proje</a>
+              {% endif %}
+              {% if user.is_sponsor %}
+                <a href="{% url 'sponsors:edit' %}">Destekçi profilim</a>
+                <a href="{% url 'sponsors:call_create' %}">Destek çağrısı aç</a>
+                <a href="{% url 'sponsors:impact' %}">Etki raporum</a>
+              {% endif %}
+              <a href="{% url 'matching:inbox' %}">Eşleşmelerim</a>
+              {% if user.is_sponsor or user.is_team_captain %}<a href="{% url 'core:verification' %}">Doğrulama</a>{% endif %}
+              <a href="{% url 'accounts:settings' %}">Hesap ve gizlilik</a>
+              {% if user.is_staff %}<a href="{% url 'admin:index' %}">Yönetim paneli</a>{% endif %}
+              <div class="ayrac"></div>
+              <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button type="submit">Çıkış yap</button></form>
+            </div>
+          </details>
+        {% else %}
+          <a class="dugme ikincil kucuk" href="{% url 'accounts:login' %}">Giriş</a>
+          <a class="dugme kucuk" href="{% url 'accounts:register' %}">Katıl</a>
+        {% endif %}
+        <details class="kullanici-menu mobil-menu">
+          <summary class="ikon-dugme" aria-label="Menü"><svg aria-hidden="true"><use href="#i-menu"/></svg></summary>
+          <div class="acilir">
+            <a href="{% url 'projects:list' %}">Projeler</a>
+            <a href="{% url 'sponsors:list' %}">Destekçiler</a>
+            <a href="{% url 'sponsors:calls' %}">Destek çağrıları</a>
+            <a href="{% url 'rankings:leaderboard' %}">Sıralama</a>
+            <a href="{% url 'rankings:thanks' %}">Teşekkür duvarı</a>
+            <a href="{% url 'core:about' %}">Nasıl işler?</a>
+            {% if not user.is_authenticated %}<div class="ayrac"></div><a href="{% url 'accounts:login' %}">Giriş yap</a>{% endif %}
+          </div>
+        </details>
+      </div>
+    </div>
+  </header>
+
+  {% if user.is_authenticated and not user.email_verified %}
+    <div class="kap dogrulama-serit" role="status">
+      <form class="uyari-kutu" method="post" action="{% url 'accounts:resend_verification' %}">
+        {% csrf_token %}
+        E-posta adresin henüz doğrulanmadı. Talep göndermek ve mesajlaşmak için gelen kutundaki bağlantıya tıkla.
+        <button class="metin-dugme" type="submit">Bağlantıyı yeniden gönder</button>
+      </form>
+    </div>
+  {% endif %}
+
+  {% if needs_reconsent and request.resolver_match.url_name != "reconsent" %}
+    <div class="kap dogrulama-serit" role="status">
+      <div class="uyari-kutu turkuaz">Aydınlatma metni ve kullanım koşulları güncellendi. <a href="{% url 'accounts:reconsent' %}?next={{ request.path|urlencode }}">Değişiklikleri gör ve onayla</a></div>
+    </div>
+  {% endif %}
+
+  <main id="icerik" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% if messages %}
+    <ul class="bildirimler" aria-live="polite">
+      {% for message in messages %}
+        <li class="bildirim {{ message.tags }}"><p>{{ message }}</p><button type="button" aria-label="Kapat">×</button></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <footer class="alt-bilgi">
+    <div class="kap">
+      <div>
+        <a class="marka" href="{% url 'core:home' %}">{{ SITE.SITE_NAME }}</a>
+        <p class="gokturk" aria-label="Göktürk harfleriyle Türk">𐱅𐰇𐰼𐰚</p>
+        <p>{{ SITE.SITE_TAGLINE }}.</p>
+        <p class="alt-soz">“{{ footer_quote.text }}”{% if footer_quote.author %} — {{ footer_quote.author }}{% endif %}</p>
+      </div>
+      <div>
+        <h2>Keşfet</h2>
+        <ul>
+          <li><a href="{% url 'projects:list' %}">Destek arayan projeler</a></li>
+          <li><a href="{% url 'sponsors:list' %}">Destekçiler</a></li>
+          <li><a href="{% url 'sponsors:calls' %}">Destek çağrıları</a></li>
+          <li><a href="{% url 'rankings:leaderboard' %}">Kanat sıralaması</a></li>
+          <li><a href="{% url 'rankings:awards' %}">Ödüller</a></li>
+          <li><a href="{% url 'rankings:thanks' %}">Teşekkür duvarı</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Yasal</h2>
+        <ul>
+          <li><a href="{% url 'core:legal' 'aydinlatma' %}">KVKK aydınlatma metni</a></li>
+          <li><a href="{% url 'core:legal' 'kullanim' %}">Kullanım koşulları</a></li>
+          <li><a href="{% url 'core:legal' 'cerez' %}">Çerez politikası</a></li>
+          <li><a href="{% url 'core:legal' 'sponsorluk-sozlesmesi' %}">Sözleşme şablonu</a></li>
+          <li><a href="{% url 'core:data_request' %}">KVKK başvurusu</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Platform</h2>
+        <ul>
+          <li><a href="{% url 'core:about' %}">Nasıl işler?</a></li>
+          <li><a href="{% url 'core:about' %}#guvenlik">Güvenlik</a></li>
+          <li><a href="{% url 'core:security_txt' %}">security.txt</a></li>
+        </ul>
+      </div>
+      <div class="en-alt">
+        <span>© {% now "Y" %} {{ SITE.SITE_NAME }}. Açık kaynak, reklamsız, izleme çerezi yok.</span>
+        <span>Para transferine aracılık etmez; destekler taraflar arasında doğrudan yapılır.</span>
+      </div>
+    </div>
+  </footer>
+
+  <aside class="cerez" data-cerez hidden aria-label="Çerez bilgilendirmesi">
+    <p>Yalnızca oturum ve güvenlik için zorunlu çerezler kullanıyoruz. Reklam ya da izleme çerezi yok. <a href="{% url 'core:legal' 'cerez' %}">Ayrıntılar</a></p>
+    <button class="dugme kucuk" type="button">Anladım</button>
+  </aside>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

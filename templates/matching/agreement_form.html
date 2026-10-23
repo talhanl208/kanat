@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Sözleşme — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>Sponsorluk sözleşmesini hazırla</h1>
+  <p>Alanlar şablona yerleştirilir. Kaydettikten sonra metin değişirse önceki onaylar düşer; iki taraf yeniden onaylar.</p>
+</div>
+<div class="kap orta">
+  <div class="uyari-kutu"><p><strong>Önemli:</strong> Platform para transferine aracılık etmez. Nakdi desteklerin okulun, üniversitenin veya takımın bağlı olduğu tüzel kişinin resmi hesabına yapılmasını öneririz. Reşit olmayan üyeli takımlarda sözleşmeyi danışman öğretmen onaylamalıdır.</p></div>
+  <form class="form kutu" method="post" novalidate>
+    {% csrf_token %}
+    {% include "partials/form_errors.html" %}
+    {% include "partials/field.html" with field=form.support_summary %}
+    {% include "partials/field.html" with field=form.team_obligations %}
+    {% include "partials/field.html" with field=form.sponsor_obligations %}
+    {% include "partials/field.html" with field=form.payment_channel %}
+    <div class="form-satir">{% include "partials/field.html" with field=form.start_date %}{% include "partials/field.html" with field=form.end_date %}</div>
+    <div class="form-eylem"><button class="dugme" type="submit">Sözleşmeyi kaydet</button><a href="{{ req.get_absolute_url }}">Vazgeç</a></div>
+  </form>
+</div>
+{% endblock %}

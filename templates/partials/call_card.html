@@ -1,0 +1,17 @@
+{% load kanat_tags %}
+<article class="cagri">
+  <div class="ust">
+    <span>{{ call.sponsor.name }}{% if call.sponsor.verified %} <svg class="unvan" width="14" height="14" aria-label="Doğrulanmış"><use href="#i-kalkan"/></svg>{% endif %}</span>
+    <span class="kalan-gun{% if call.days_left <= 3 %} acil{% endif %}">{% if call.days_left == 0 %}Bugün son gün{% else %}{{ call.days_left }} gün kaldı{% endif %}</span>
+  </div>
+  <h3><a href="{{ call.get_absolute_url }}">{{ call.title }}</a></h3>
+  <ul class="etiketler">
+    <li class="etiket {{ call.kind }}">{{ call.get_kind_display }}</li>
+    {% if call.amount_per_team %}<li class="etiket">Takım başına {{ call.amount_per_team|tl }}</li>{% endif %}
+    {% if call.mentor_hours %}<li class="etiket">{{ call.mentor_hours }} saat mentörlük</li>{% endif %}
+  </ul>
+  <div class="ust">
+    <span>{% if call.category_labels %}{{ call.category_labels|join:", "|truncatechars:48 }}{% else %}Tüm alanlar{% endif %}</span>
+    <span>{{ call.slots_left }}/{{ call.slots }} yer boş</span>
+  </div>
+</article>

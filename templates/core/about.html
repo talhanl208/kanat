@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Nasıl işler? — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <h1>Nasıl işler?</h1>
+  <p>Kanat, yarışma ve araştırma projesi yürüten gençleri; bütçe, malzeme, üretim imkânı veya bilgi birikimiyle destek olmak isteyenlerle buluşturur. Adı, sloganımızdan gelir: Geleceğin Yönünü Değiştiren Hayatlar.</p>
+</div>
+<div class="kap iki-sutun">
+  <div>
+    <section class="kutu metin">
+      <h2>Takımlar için</h2>
+      <p>Takım olarak ya da bireysel katıl, projeni ve ihtiyaç listeni yaz. Her ihtiyacın türü (maddi, malzeme, üretim/hizmet, mentörlük, ulaşım) ve tahmini tutarı eşleştirme motorunu besler. Panelinde sana en uygun destekçiler, uyum puanı ve gerekçesiyle sıralanır.</p>
+      <h2>Destekçiler için</h2>
+      <p>Hangi tür desteği, hangi alanlara ve hangi bütçe aralığında verebileceğini söyle. Ürün ve hizmet anahtar kelimelerin (ör. “PCB baskı”, “CNC”) takımların ihtiyaç listeleriyle karşılaştırılır. Bir projeye teklif gönderebilir, sana gelen talepleri yanıtlayabilirsin.</p>
+      <h2>Eşleştirme nasıl puanlanır?</h2>
+      <p>Uyum puanı 100 üzerinden altı ölçütle hesaplanır: destek türü (35), alan (20), bütçe (15), ürün/hizmet anahtar kelimeleri (10), konum (10) ve yarışma (10). Destek türleri hiç örtüşmüyorsa puan düşük kalır. Kural tabanlıdır, gerekçesi her zaman görünür; karar hep sizindir.</p>
+      <h2>Ortak kanat</h2>
+      <p>Büyük bir ihtiyacı tek bir destekçi karşılamak zorunda değil. 40.000 ₺'lik bir batarya setinin 15.000 ₺'sini bir KOBİ, kalanını başka bir firma üstlenebilir. İhtiyaç listesinde her kalemin ne kadarının üstlenildiği çubukla görünür; katkılar tutarı karşılayınca kalem kendiliğinden kapanır, birlikte destek verenler “Ortak kanat” rozeti ve bonus puan kazanır.</p>
+      <h2>Destek çağrıları</h2>
+      <p>Destekçiler “3 İHA takımına motor desteği” gibi çağrılar açabilir. Projesi uyan takımlara bildirim gider; başvurular uyum puanına göre sıralanır ve seçilen başvuru doğrudan sözleşme adımına geçer.</p>
+      <h2>Takım olarak çalışın</h2>
+      <p>Kaptan, takım arkadaşlarını e-postayla davet eder. Üyeler projeleri güncelleyip destekçilerle yazışabilir; sözleşme ve teslim onayı gibi bağlayıcı adımlar kaptanda kalır. Kaptan mezun olunca kaptanlığı devredebilir.</p>
+      <h2>Sözleşme ve güven</h2>
+      <p>Talep kabul edilince hazır sponsorluk şablonu doldurulur ve iki taraf parolasıyla onaylar. Metnin SHA-256 özeti saklanır; metin değişirse onaylar düşer. Para platformdan geçmez; nakdi desteklerin okul ya da üniversite hesabına yapılmasını öneririz.</p>
+      <h2>Kanat puanı, unvanlar ve ödüller</h2>
+      <p>Takım desteği teslim aldığını onayladığında destekçi puan kazanır. Tutar karekökle ölçeklenir, böylece KOBİ'ler ve mentörler de görünür olur. Hiç destek almamış bir takıma ilk desteği vermek ekstra puan getirir. Sıralamaya yalnızca doğrulanmış destekçiler girer; aynı takıma tekrar tekrar verilen destekler azalan puan alır, şüpheli durumlar yönetim incelemesine düşer. Destekçiler yıl sonunda kurumsal raporlarında kullanabilecekleri bir etki raporu alır. Destekçiler Kanat adayı, Doğan, Şahin, Kartal ve Anka unvanlarıyla yükselir; aylık “Ayın Kanadı” ve yıllık “Yılın Ankası” ödülleri doğrulama kodlu belgeyle verilir.</p>
+    </section>
+
+    <section class="kutu metin" id="guvenlik">
+      <h2>Güvenlik ve gizlilik</h2>
+      <ul>
+        <li>Parolalar Argon2id ile özetlenir; en az 10 karakter ve yaygın parola kontrolü vardır.</li>
+        <li>İsteğe bağlı iki adımlı doğrulama (doğrulama uygulaması + tek kullanımlık kurtarma kodları); yönetim paneli için zorunlu.</li>
+        <li>Sponsorluk dosyaları betik ve gömülü dosya taramasından geçer, herkese açık sunulmaz, yalnızca indirme olarak verilir.</li>
+        <li>Takımlar okul e-postasıyla, destekçiler kurumsal alan adıyla otomatik doğrulanır; diğerlerini yönetim inceler.</li>
+        <li>Engelleme ve şikâyet; reşit olmayanlara uygunsuz yaklaşım bildirimleri yönetime acil olarak düşer.</li>
+        <li>Giriş, kayıt, mesaj ve başvuru formlarında hız sınırı; hesap var mı yok mu ekranda belli edilmez.</li>
+        <li>Katı içerik güvenlik politikası (CSP): yalnızca kendi alan adımızdan betik, nonce'lu tek satır içi betik, üçüncü taraf yok.</li>
+        <li>Yüklenen görseller yeniden kodlanır; EXIF ve konum bilgisi silinir.</li>
+        <li>Her eşleşme sayfasında nesne düzeyinde yetki kontrolü; başkasının sürecine erişim mümkün değildir.</li>
+        <li>IP adresleri açık hâlde saklanmaz, anahtarlı özetle takma adlandırılır.</li>
+        <li>Verilerini tek tıkla indirebilir, hesabını kapatabilirsin.</li>
+      </ul>
+      <h3>Sorumlu açıklık bildirimi</h3>
+      <p>Bir güvenlik açığı bulduysan lütfen herkese açık paylaşmadan önce <a href="mailto:{{ SITE.SECURITY_CONTACT }}">{{ SITE.SECURITY_CONTACT }}</a> adresine yaz. İyi niyetli araştırmacılara karşı hukuki yola başvurmayız; bildirimi 5 iş günü içinde yanıtlarız.</p>
+    </section>
+  </div>
+  <aside>
+    <div class="kutu"><h3>Hemen başla</h3>
+      <div class="form-eylem"><a class="dugme tam" href="{% url 'accounts:register' %}?rol=takim">Takımımı kaydet</a><a class="dugme altin tam" href="{% url 'accounts:register' %}?rol=destekci">Destekçi ol</a></div></div>
+    <div class="kutu"><h3>Açık kaynak</h3><p class="kucuk soluk">Kanat'ın kaynak kodu açıktır. Hata bildirimi ve katkılar için proje deposunu ziyaret et.</p></div>
+  </aside>
+</div>
+{% endblock %}

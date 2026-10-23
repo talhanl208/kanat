@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load static kanat_tags %}
+
+{% block content %}
+<section class="gok" aria-labelledby="kahraman-baslik">
+  <canvas data-gok aria-hidden="true"></canvas>
+  <div class="gok-gokturk gokturk" aria-hidden="true">𐰴𐰣𐱃</div>
+  <div class="kap kahraman">
+    <div>
+      <p class="slogan"><span class="gokturk" aria-hidden="true">𐱅𐰇𐰼𐰚</span>{{ SITE.SITE_TAGLINE }}</p>
+      <h1 id="kahraman-baslik">
+        <span class="satir">Fikrin hazır.</span>
+        <span class="satir">Kanadını</span>
+        <span class="satir">birlikte bulalım.</span>
+      </h1>
+      <p class="giris-metni">TEKNOFEST, TÜBİTAK ve diğer yarışmalardaki takımları; maddi destek, malzeme, üretim ve mentörlük sunan destekçilerle ihtiyaca göre eşleştiriyoruz.</p>
+      <div class="eylemler">
+        <a class="dugme" href="{% url 'accounts:register' %}?rol=takim">Takımımı kaydet</a>
+        <a class="dugme altin" href="{% url 'accounts:register' %}?rol=destekci">Bir projeye kanat ol</a>
+      </div>
+      <p class="canli-satir"><span class="nabiz" aria-hidden="true"></span>Şu an <strong>{{ stats.teams }} takım</strong> ve <strong>{{ stats.sponsors }} destekçi</strong> burada; <strong>{{ stats.completed }} destek</strong> sahibine ulaştı.</p>
+    </div>
+
+    {% with t=thanks.0 %}
+    <aside class="eslesme-karti" aria-label="Son tamamlanan destek">
+      <h3>{% if t %}Son ulaşan destek{% else %}Bir eşleşme nasıl görünür?{% endif %}</h3>
+      <div class="eslesme-taraflar">
+        <div class="taraf"><b>{% if t %}{{ t.project.team.name }}{% else %}Bozkır Roket{% endif %}</b><span>{% if t %}{{ t.project.title|truncatechars:34 }}{% else %}Orta irtifa roketi{% endif %}</span></div>
+        <div class="baglanti-cizgisi" aria-hidden="true"></div>
+        <div class="taraf"><b>{% if t %}{{ t.sponsor.name }}{% else %}Yerel bir KOBİ{% endif %}</b><span>{% if t %}{{ t.get_kind_display }}{% else %}Malzeme desteği{% endif %}</span></div>
+      </div>
+      <ul>
+        {% if t %}
+          <li><svg aria-hidden="true"><use href="#i-onay"/></svg><span>“{{ t.thanks_note|truncatechars:110 }}”</span></li>
+          {% if t.delivered_value %}<li><svg aria-hidden="true"><use href="#i-onay"/></svg><span>{{ t.delivered_value|tl }} değerinde destek</span></li>{% endif %}
+        {% else %}
+          <li><svg aria-hidden="true"><use href="#i-onay"/></svg><span>İhtiyaç listen destekçinin ürünleriyle eşleşir</span></li>
+          <li><svg aria-hidden="true"><use href="#i-onay"/></svg><span>Uyum puanı ve nedenleri açıkça gösterilir</span></li>
+        {% endif %}
+      </ul>
+    </aside>
+    {% endwith %}
+  </div>
+</section>
+
+<section class="bolum kap" aria-labelledby="adim-baslik">
+  <div class="bolum-bas">
+    <h2 id="adim-baslik">İhtiyaçtan teşekküre beş adım</h2>
+    <p>Para platformdan geçmez. Biz doğru iki tarafı buluşturur, anlaşmayı kayıt altına alır ve emeği görünür kılarız.</p>
+  </div>
+  <ol class="adimlar">
+    <li><h3>Projeni anlat</h3><p>Takım ya da bireysel olarak katıl; alanını, yarışmanı ve aşamanı yaz.</p></li>
+    <li><h3>İhtiyacını listele</h3><p>Motor, CNC kesim, mentörlük saati, ulaşım… Tutarıyla birlikte.</p></li>
+    <li><h3>Eşleş</h3><p>Sistem sana uygun destekçileri uyum puanı ve gerekçesiyle önerir.</p></li>
+    <li><h3>Anlaş</h3><p>Hazır şablondan sözleşme oluştur; iki taraf da parolasıyla onaylar.</p></li>
+    <li><h3>Teşekkür et</h3><p>Desteği teslim aldığını onayla; destekçin Kanat puanı ve rozet kazansın.</p></li>
+  </ol>
+</section>
+
+<section class="bolum kap" aria-labelledby="destek-baslik">
+  <div class="bolum-bas">
+    <h2 id="destek-baslik">Destek yalnızca para değildir</h2>
+    <p>Bir KOBİ'nin atölyesindeki bir günlük CNC, bir mühendisin haftada bir saati de bir takımı finale taşır.</p>
+  </div>
+  <div class="karolar">
+    <div class="karo"><svg aria-hidden="true"><use href="#i-maddi"/></svg><h3>Maddi destek</h3><p>Okul veya üniversite hesabı üzerinden şeffaf sponsorluk.</p></div>
+    <div class="karo"><svg aria-hidden="true"><use href="#i-malzeme"/></svg><h3>Malzeme ve ürün</h3><p>Motor, sensör, batarya, kart; doğrudan ürün olarak.</p></div>
+    <div class="karo"><svg aria-hidden="true"><use href="#i-hizmet"/></svg><h3>Üretim ve hizmet</h3><p>CNC, PCB baskı, 3D yazıcı, test alanı, bulut sunucu.</p></div>
+    <div class="karo"><svg aria-hidden="true"><use href="#i-mentorluk"/></svg><h3>Mentörlük</h3><p>Onaylı mentörlük saatleri sıralamada da sayılır.</p></div>
+    <div class="karo"><svg aria-hidden="true"><use href="#i-ulasim"/></svg><h3>Ulaşım ve konaklama</h3><p>Finale gidemeyen takım kalmasın.</p></div>
+  </div>
+</section>
+
+<section class="bolum kap" aria-labelledby="proje-baslik">
+  <div class="bolum-bas">
+    <h2 id="proje-baslik">Kanat arayan projeler</h2>
+    <a class="dugme ikincil" href="{% url 'projects:list' %}">Tüm projeleri gör</a>
+  </div>
+  {% if projects %}
+    <div class="izgara">{% for project in projects %}{% include "partials/project_card.html" %}{% endfor %}</div>
+  {% else %}
+    <div class="bos"><p>İlk proje seninki olabilir.</p><a class="dugme" href="{% url 'accounts:register' %}">Projeni ekle</a></div>
+  {% endif %}
+</section>
+
+{% if calls %}
+<section class="bolum kap" aria-labelledby="cagri-baslik">
+  <div class="bolum-bas">
+    <h2 id="cagri-baslik">Açık destek çağrıları</h2>
+    <a class="dugme ikincil" href="{% url 'sponsors:calls' %}">Tüm çağrılar</a>
+  </div>
+  <div class="izgara">{% for call in calls %}{% include "partials/call_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+
+<section class="soz-bandi" aria-label="Gençlere sözler">
+  <div class="kap">
+    <svg class="yildiz-buyuk" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-yildiz"/></svg>
+    <div>
+      <figure class="soz" data-sozler aria-live="polite">
+        <blockquote>“{{ quotes.0.text }}”</blockquote>
+        <figcaption>— {{ quotes.0.author|default:"Kanat" }}</figcaption>
+      </figure>
+      <div class="soz-noktalar"></div>
+    </div>
+  </div>
+</section>
+{{ quotes|json_script:"soz-verisi" }}
+
+<section class="bolum kap" aria-labelledby="sira-baslik">
+  <div class="bolum-bas">
+    <h2 id="sira-baslik">{{ period.label }} kanatları</h2>
+    <p>Puanlar yalnızca takımların onayladığı desteklerden gelir. Küçük işletmeler ve mentörler de zirveye çıkabilsin diye tutar karekökle ölçeklenir.</p>
+  </div>
+  {% if top_sponsors %}
+    <div class="kursu">
+      {% for s in top_sponsors %}
+        <div class="kursu-yeri{% if s.rank == 1 %} bir{% endif %}">
+          <span class="sira">{{ s.rank }}</span>
+          <div class="avatar destekci buyuk" aria-hidden="true">{% if s.logo %}<img src="{{ s.logo.url }}" alt="">{% else %}{{ s.initials }}{% endif %}</div>
+          <b><a href="{{ s.get_absolute_url }}">{{ s.name }}</a></b>
+          <span class="puan">{{ s.total }} puan</span>
+          <span class="kucuk soluk">{{ s.supported }} proje</span>
+        </div>
+      {% endfor %}
+    </div>
+    <p class="kucuk"><a href="{% url 'rankings:leaderboard' %}">Sıralamanın tamamı ve puan kuralları</a></p>
+  {% else %}
+    <div class="bos"><p>Bu ay henüz tamamlanan destek yok. İlk kanat sen ol.</p></div>
+  {% endif %}
+</section>
+
+{% if thanks %}
+<section class="bolum kap" aria-labelledby="tesekkur-baslik">
+  <div class="bolum-bas">
+    <h2 id="tesekkur-baslik">Teşekkür duvarından</h2>
+    <a class="dugme ikincil" href="{% url 'rankings:thanks' %}">Tüm teşekkürler</a>
+  </div>
+  <div class="notlar">
+    {% for t in thanks %}
+      <figure class="not">
+        <blockquote>“{{ t.thanks_note }}”</blockquote>
+        <figcaption><b>{{ t.project.team.name }}</b> teşekkür ediyor: {{ t.sponsor.name }}</figcaption>
+      </figure>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}<script src="{% static 'js/sky.js' %}" defer></script>{% endblock %}

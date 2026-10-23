@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Giriş — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap dar sayfa-bas"><h1>Tekrar hoş geldin</h1></div>
+<div class="kap dar">
+  <form class="form kutu" method="post" novalidate>
+    {% csrf_token %}
+    {% if error %}<p class="form-hatalari" role="alert">{{ error }}</p>{% endif %}
+    {% include "partials/field.html" with field=form.email %}
+    {% include "partials/field.html" with field=form.password %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="form-eylem">
+      <button class="dugme tam" type="submit">Giriş yap</button>
+    </div>
+    <p class="kucuk"><a href="{% url 'accounts:password_reset' %}">Parolamı unuttum</a></p><p class="kucuk soluk">Hesabın yok mu? <a href="{% url 'accounts:register' %}">Hemen oluştur</a></p>
+  </form>
+</div>
+{% endblock %}

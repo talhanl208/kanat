@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Bu sayfaya erişimin yok — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap dar sayfa-bas">
+  <p class="gokturk soluk" aria-hidden="true">𐰴𐰣𐱃</p>
+  <h1>Bu sayfaya erişimin yok</h1>
+  <p>Bu işlem hesabının rolüne ya da sahip olduğun içeriğe ait değil.</p>
+  <a class="dugme" href="{% url 'core:home' %}">Ana sayfaya dön</a>
+</div>
+{% endblock %}

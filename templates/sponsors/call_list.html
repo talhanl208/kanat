@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Destek çağrıları — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <h1>Destek çağrıları</h1>
+  <p>Destekçiler belirli bir destek için başvuru topluyor. Projene uyan çağrıya başvur; seçilirsen süreç doğrudan sözleşme adımına ilerler.</p>
+  {% if user.is_sponsor %}<a class="dugme altin" href="{% url 'sponsors:call_create' %}">Yeni çağrı aç</a>{% endif %}
+</div>
+<div class="kap">
+  <form class="filtre filtre-dar" method="get">
+    <label class="gizli" for="id_destek">Destek türü</label>{{ form.destek }}
+    <label class="gizli" for="id_alan">Alan</label>{{ form.alan }}
+    <button class="dugme" type="submit">Süz</button>
+  </form>
+  {% if calls %}
+    <div class="izgara">{% for call in calls %}{% include "partials/call_card.html" %}{% endfor %}</div>
+  {% else %}
+    <div class="bos"><p>Şu an açık bir çağrı yok. Yeni çağrılar açıldığında projene uyanları bildirim olarak göndereceğiz.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

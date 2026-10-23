@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% load kanat_tags %}
+{% block title %}{{ project.title }} — {{ SITE.SITE_NAME }}{% endblock %}
+{% block description %}{{ project.summary }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <ul class="bilgi-satiri">
+    <li><span class="etiket">{{ project.get_category_display }}</span></li>
+    <li>{{ project.get_competition_display }}{% if project.competition_detail %}: {{ project.competition_detail }}{% endif %}</li>
+    <li><span class="durum {% if project.status == 'aktif' and not project.is_expired %}beklemede{% else %}anlasma{% endif %}">{% if project.status == 'aktif' and project.is_expired %}Son tarihi geçti{% else %}{{ project.get_status_display }}{% endif %}</span></li>
+  </ul>
+  <h1>{{ project.title }}</h1>
+  <p>{{ project.summary }}</p>
+</div>
+
+<div class="kap iki-sutun">
+  <div>
+    {% if is_member and project.is_expired and project.status == 'aktif' %}
+      <div class="uyari-kutu">Son tarih geçtiği için proje destek arayan listelerden kalktı. <a href="{% url 'projects:edit' project.slug %}">Yeni bir tarih gir</a> ya da projeyi tamamlandı olarak işaretle.</div>
+    {% endif %}
+    <section class="kutu" aria-labelledby="h-anlat">
+      <h2 id="h-anlat">Proje</h2>
+      <div class="metin">{{ project.description|linebreaks }}</div>
+      {% if project.sponsor_benefits %}
+        <h3>Destekçiye sunduklarımız</h3>
+        <div class="metin">{{ project.sponsor_benefits|linebreaks }}</div>
+      {% endif %}
+    </section>
+
+    <section class="kutu" aria-labelledby="h-ihtiyac">
+      <div class="kutu-bas"><h2 id="h-ihtiyac">İhtiyaç listesi</h2><span class="soluk kucuk">%{{ project.progress_percent }} karşılandı</span></div>
+      <div class="ilerleme" aria-hidden="true"><span data-yuzde="{{ project.progress_percent }}"></span></div>
+      <ul class="liste">
+        {% for need in project.needs.all %}
+          <li>
+            <span class="etiket {{ need.kind }}">{{ need.get_kind_display }}</span>
+            <div class="buyut"><b>{{ need.title }}</b>{% if need.detail %}<div class="kucuk soluk">{{ need.detail }}</div>{% endif %}
+              {% if need.estimated_cost and not need.fulfilled and need.committed_amount %}
+                <div class="fon">
+                  <div class="ilerleme" aria-hidden="true"><span data-yuzde="{{ need.funded_percent }}"></span></div>
+                  <small>{{ need.estimated_cost|tl }} ihtiyacın {{ need.committed_amount|tl }} kadarını {{ need.contributor_count }} destekçi üstlendi</small>
+                </div>
+              {% endif %}
+              {% if need.is_shareable and user.is_sponsor and match and not open_request and not blocked %}
+                <a class="ortak-ipucu" href="{% url 'matching:offer' project.slug %}?ihtiyac={{ need.pk }}">Bu ihtiyaca ortak kanat ol</a>
+              {% endif %}
+            </div>
+            <span class="kucuk">{% if need.estimated_cost %}{{ need.estimated_cost|tl }}{% elif need.mentor_hours %}{{ need.mentor_hours }} saat{% endif %}</span>
+            {% if need.fulfilled %}<span class="durum tamamlandi">Karşılandı</span>{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+      {% if project.monetary_need %}<p class="kucuk soluk">Açık ihtiyaçların kalan tahmini tutarı: <b>{{ project.monetary_need|tl }}</b>. Parasal ihtiyaçlar parça parça da desteklenebilir.</p>{% endif %}
+    </section>
+
+    <section class="kutu" id="dosya" aria-labelledby="h-dosya">
+      <div class="kutu-bas"><h2 id="h-dosya">Sponsorluk dosyası</h2>{% if project.dossier %}<span class="kucuk soluk">{{ project.dossier_uploaded_at|date:"d M Y" }}</span>{% endif %}</div>
+      {% if project.dossier %}
+        {% if can_download %}
+          <a class="dugme ikincil" href="{% url 'projects:dossier' project.slug %}"><svg aria-hidden="true"><use href="#i-dosya"/></svg>PDF'i indir</a>
+        {% elif user.is_authenticated %}
+          <p class="soluk">Sponsorluk dosyasını yalnızca destekçiler indirebilir.</p>
+        {% else %}
+          <p class="soluk">Dosyayı indirmek için <a href="{% url 'accounts:login' %}?next={{ request.path }}">destekçi olarak giriş yap</a>.</p>
+        {% endif %}
+      {% elif not is_member %}
+        <p class="soluk">Takım henüz sponsorluk dosyası yüklemedi.</p>
+      {% endif %}
+      {% if is_member %}
+        <form class="form bolum-ust" method="post" action="{% url 'projects:dossier_upload' project.slug %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% include "partials/field.html" with field=dossier_form.dossier %}
+          <p class="kucuk soluk">Güvenlik için betik, gömülü dosya ya da form içeren PDF'ler reddedilir. Dosya herkese açık değildir; yalnızca giriş yapmış destekçiler indirebilir.</p>
+          <div class="form-eylem"><button class="dugme kucuk" type="submit">{% if project.dossier %}Dosyayı değiştir{% else %}Dosyayı yükle{% endif %}</button></div>
+        </form>
+        {% if project.dossier %}<form method="post" action="{% url 'projects:dossier_delete' project.slug %}" data-onay="Sponsorluk dosyası silinecek.">{% csrf_token %}<button class="metin-dugme" type="submit">Dosyayı kaldır</button></form>{% endif %}
+      {% endif %}
+    </section>
+
+    <section class="kutu" id="gunluk" aria-labelledby="h-gunluk">
+      <h2 id="h-gunluk">Proje günlüğü</h2>
+      {% if is_member %}
+        <form class="form" method="post" action="{% url 'projects:update_create' project.slug %}">
+          {% csrf_token %}
+          {% include "partials/field.html" with field=update_form.title %}
+          {% include "partials/field.html" with field=update_form.body %}
+          <div class="form-eylem"><button class="dugme kucuk" type="submit">Günlüğe ekle</button></div>
+        </form>
+      {% endif %}
+      <ul class="liste">
+        {% for u in project.updates.all %}
+          <li><div class="buyut"><b>{{ u.title }}</b><div class="metin">{{ u.body|linebreaksbr }}</div></div><span class="kucuk soluk">{{ u.created_at|date:"d M Y" }}</span></li>
+        {% empty %}
+          <li class="soluk">Henüz günlük girdisi yok.</li>
+        {% endfor %}
+      </ul>
+    </section>
+  </div>
+
+  <aside>
+    <div class="kutu">
+      <div class="proje-ust">
+        <div class="avatar buyuk" aria-hidden="true">{% if project.team.logo %}<img src="{{ project.team.logo.url }}" alt="">{% else %}{{ project.team.initials }}{% endif %}</div>
+        <div><h3><a href="{% url 'projects:team_detail' project.team.slug %}">{{ project.team.name }}</a></h3>
+          <span class="kucuk soluk">{{ project.team.get_kind_display }}, {{ project.team.member_count }} kişi</span>
+          {% if project.team.verified %}<div><span class="etiket dogrulandi"><svg aria-hidden="true"><use href="#i-kalkan"/></svg>Doğrulanmış takım</span></div>{% endif %}</div>
+      </div>
+      <ul class="bilgi-satiri">
+        <li><svg aria-hidden="true"><use href="#i-okul"/></svg>{{ project.team.institution }}</li>
+        <li><svg aria-hidden="true"><use href="#i-konum"/></svg>{{ project.team.city }}</li>
+        {% if project.deadline %}<li><svg aria-hidden="true"><use href="#i-takvim"/></svg>Son tarih {{ project.deadline|date:"d M Y" }}</li>{% endif %}
+      </ul>
+      {% if project.team.has_minor_members %}<p class="kucuk uyari-kutu">Takımda reşit olmayan üyeler var; iletişim danışman öğretmen üzerinden yürür.</p>{% endif %}
+    </div>
+
+    {% if match %}
+      <div class="kutu">
+        <div class="kutu-bas"><h3>Profilinle uyum</h3>{% include "partials/score_ring.html" with match=match buyuk=1 %}</div>
+        <ul class="nedenler">{% for r in match.reasons %}<li>{{ r }}</li>{% endfor %}</ul>
+        <div class="form-eylem">
+          {% if blocked %}
+            <p class="kucuk soluk">Bu takımla aranızda engelleme var.</p>
+          {% elif open_request %}
+            <a class="dugme tam" href="{{ open_request.get_absolute_url }}">Süreci görüntüle</a>
+          {% elif project.status == 'aktif' and not project.is_expired %}
+            <a class="dugme altin tam" href="{% url 'matching:offer' project.slug %}">Bu projeye destek ol</a>
+          {% endif %}
+        </div>
+      </div>
+    {% elif not user.is_authenticated %}
+      <div class="kutu">
+        <h3>Bu projeye kanat ol</h3>
+        <p class="soluk">Destekçi olarak katıl; uyum puanını gör ve takımla doğrudan iletişime geç.</p>
+        <a class="dugme altin tam" href="{% url 'accounts:register' %}?rol=destekci">Destekçi olarak katıl</a>
+      </div>
+    {% endif %}
+
+    {% if is_member %}
+      <div class="kutu">
+        <h3>Projeni yönet</h3>
+        <div class="form-eylem">
+          <a class="dugme ikincil kucuk" href="{% url 'projects:edit' project.slug %}">Düzenle</a>
+          {% if is_captain %}
+            <form method="post" action="{% url 'projects:status' project.slug %}">{% csrf_token %}
+              {% if project.status == 'aktif' %}<button class="dugme ikincil kucuk" name="status" value="tamamlandi">Tamamlandı yap</button>
+              {% else %}<button class="dugme ikincil kucuk" name="status" value="aktif">Yeniden yayına al</button>{% endif %}
+            </form>
+            <form method="post" action="{% url 'projects:status' project.slug %}" data-onay="Proje arşivlenecek ve herkese açık listelerden kalkacak.">{% csrf_token %}
+              <button class="dugme ikincil kucuk" name="status" value="arsiv">Arşivle</button></form>
+          {% endif %}
+        </div>
+        {% if not is_captain %}<p class="kucuk soluk">Durum değişikliklerini takım kaptanı yapar.</p>{% endif %}
+      </div>
+      {% if recommendations %}
+        <div class="kutu">
+          <h3>Sana önerilen destekçiler</h3>
+          <ul class="liste">{% for sponsor, match in recommendations %}{% include "partials/sponsor_row.html" %}{% endfor %}</ul>
+        </div>
+      {% endif %}
+    {% endif %}
+
+    {% if supporters %}
+      <div class="kutu">
+        <h3>Bu projenin kanatları</h3>
+        <ul class="liste">{% for r in supporters %}<li><a class="baslik" href="{{ r.sponsor.get_absolute_url }}">{{ r.sponsor.name }}</a><span class="etiket {{ r.kind }}">{{ r.get_kind_display }}</span></li>{% endfor %}</ul>
+      </div>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

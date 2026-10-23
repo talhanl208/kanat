@@ -1,0 +1,11 @@
+{% autoescape off %}Merhaba {{ user.get_short_name }},
+
+{{ n.title }}
+{% if n.body %}
+{{ n.body }}
+{% endif %}
+Görüntülemek için: {{ link }}
+
+--
+Bu e-postayı {{ site.SITE_NAME }} hesabındaki bir gelişme nedeniyle aldın.
+Bildirim e-postalarını kapatmak için: {{ unsubscribe }}{% endautoescape %}

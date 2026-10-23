@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Hesabı kapat — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap dar sayfa-bas">
+  <h1>Hesabını kapat</h1>
+  <p>Bu işlem geri alınamaz.</p>
+</div>
+<div class="kap dar">
+  <div class="uyari-kutu mercan">
+    <p><strong>Silinecekler:</strong> profilin, projelerin, ihtiyaç listelerin, sponsorluk dosyan, açık talepler, bildirimlerin, takım üyeliğin ve gönderdiğin mesajların metni.</p>
+    <p><strong>Saklanacaklar:</strong> onaylanmış sponsorluk sözleşmelerinin anlık kopyası (yasal saklama süresi boyunca) ve onay kayıtların. Bunlar adı değiştirilmiş, giriş yapılamayan bir hesaba bağlı kalır. Destekçilerin kazandığı puanlar korunur.</p>
+  </div>
+  {% if blocked_reason %}
+  <div class="uyari-kutu bolum-ust"><p>{{ blocked_reason }}</p><a class="dugme ikincil kucuk" href="{% url 'projects:members' %}">Takım üyelerine git</a></div>
+  {% else %}
+  <form class="form kutu" method="post" data-onay="Hesabın kalıcı olarak kapatılacak. Emin misin?">
+    {% csrf_token %}
+    {% include "partials/field.html" with field=form.password %}
+    {% include "partials/field.html" with field=form.confirm %}
+    <div class="form-eylem"><button class="dugme tehlike" type="submit">Hesabımı kalıcı olarak kapat</button>
+      <a href="{% url 'accounts:settings' %}">Vazgeç</a></div>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

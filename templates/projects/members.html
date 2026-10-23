@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Takım üyeleri — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>{{ team.name }} üyeleri</h1>
+  <p>Üyeler projeleri düzenleyebilir, talep gönderebilir ve destekçilerle yazışabilir. Sözleşme onayı, teslim onayı ve takım profili gibi bağlayıcı adımlar kaptana aittir.</p>
+</div>
+<div class="kap orta">
+  <section class="kutu">
+    <ul class="liste">
+      <li class="uye-satir"><div class="avatar" aria-hidden="true">{{ team.owner.full_name|slice:":1" }}</div>
+        <div class="buyut"><b>{{ team.owner.full_name }}</b>{% if team.owner == user %} <span class="soluk kucuk">(sen)</span>{% endif %}</div><span class="rol kaptan">Kaptan</span></li>
+      {% for m in memberships %}
+        <li class="uye-satir"><div class="avatar" aria-hidden="true">{{ m.user.full_name|slice:":1" }}</div>
+          <div class="buyut"><b>{{ m.user.full_name }}</b>{% if m.user == user %} <span class="soluk kucuk">(sen)</span>{% endif %}<div class="kucuk soluk">{{ m.joined_at|date:"d M Y" }} tarihinde katıldı</div></div>
+          <span class="rol">Üye</span>
+          {% if is_captain %}<form method="post" action="{% url 'projects:member_remove' m.pk %}" data-onay="{{ m.user.full_name }} takımdan çıkarılacak.">{% csrf_token %}<button class="metin-dugme" type="submit">Çıkar</button></form>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+    {% if not is_captain %}
+      <form method="post" action="{% url 'projects:leave' %}" data-onay="Takımdan ayrılacaksın.">{% csrf_token %}<button class="dugme ikincil kucuk" type="submit">Takımdan ayrıl</button></form>
+    {% endif %}
+  </section>
+
+  {% if is_captain %}
+    <section class="kutu" aria-labelledby="h-davet">
+      <h2 id="h-davet">Üye davet et</h2>
+      <p class="soluk kucuk">Davet edilen kişinin Kanat hesabı açabilmesi için 18 yaşını doldurmuş olması gerekir. Reşit olmayan takım arkadaşlarını davet etme; onlar adına danışman öğretmen hesabı kullanılır.</p>
+      <form class="form" method="post" novalidate>{% csrf_token %}
+        {% include "partials/field.html" with field=invite_form.email %}
+        <div class="form-eylem"><button class="dugme" type="submit" name="invite" value="1">Davet gönder</button>
+          <span class="kucuk soluk">En fazla {{ max_members }} üye · davetler 7 gün geçerli</span></div>
+      </form>
+      {% if invites %}
+        <h3>Bekleyen davetler</h3>
+        <ul class="liste">{% for i in invites %}
+          <li><div class="buyut">{{ i.email }}<div class="kucuk soluk">{{ i.expires_at|date:"d M" }} tarihine kadar geçerli</div></div>
+            <form method="post" action="{% url 'projects:invite_cancel' i.pk %}">{% csrf_token %}<button class="metin-dugme" type="submit">İptal et</button></form></li>
+        {% endfor %}</ul>
+      {% endif %}
+    </section>
+
+    {% if memberships %}
+      <section class="kutu" aria-labelledby="h-devir">
+        <h2 id="h-devir">Kaptanlığı devret</h2>
+        <p class="soluk kucuk">Mezun oluyor ya da takımdan ayrılıyorsan sorumluluğu bir üyeye devret. Sen üye olarak kalırsın.</p>
+        <form class="form" method="post" data-onay="Kaptanlık devredilecek. Bu işlemi yeni kaptan geri alabilir.">{% csrf_token %}
+          {% include "partials/form_errors.html" with form=transfer_form %}
+          <div class="form-satir">{% include "partials/field.html" with field=transfer_form.member %}{% include "partials/field.html" with field=transfer_form.password %}</div>
+          <div class="form-eylem"><button class="dugme ikincil" type="submit" name="transfer" value="1">Kaptanlığı devret</button></div>
+        </form>
+      </section>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

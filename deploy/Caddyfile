@@ -1,0 +1,26 @@
+{$KANAT_DOMAIN} {
+	encode zstd gzip
+
+	# Yüklenen logolar (WebP'ye yeniden kodlanmış). Betik çalıştırılamaz, tür tahmini kapalı.
+	handle_path /media/* {
+		root * /srv/media
+		header {
+			Content-Security-Policy "default-src 'none'; img-src 'self'; sandbox"
+			X-Content-Type-Options nosniff
+			Cache-Control "public, max-age=604800"
+		}
+		file_server
+	}
+
+	handle {
+		reverse_proxy web:8000 {
+			header_up X-Forwarded-Proto {scheme}
+		}
+	}
+
+	header -Server
+	log {
+		output stdout
+		format console
+	}
+}

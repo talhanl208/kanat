@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load kanat_tags %}
+{% block title %}Eşleşmelerim — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas"><h1>Eşleşmelerim</h1>
+  <nav class="sekmeler" aria-label="Süzgeç">
+    <a href="?sekme=acik" aria-current="{% if tab == 'acik' %}true{% else %}false{% endif %}">Süren</a>
+    <a href="?sekme=kapali" aria-current="{% if tab == 'kapali' %}true{% else %}false{% endif %}">Kapanan</a>
+    <a href="?sekme=tum" aria-current="{% if tab == 'tum' %}true{% else %}false{% endif %}">Tümü</a>
+  </nav>
+</div>
+<div class="kap">
+  <div class="kutu">
+    <ul class="liste">
+      {% for r in requests %}
+        <li>
+          <div class="avatar{% if user.is_team %} destekci{% endif %}" aria-hidden="true">{% if user.is_team %}{{ r.sponsor.initials }}{% else %}{{ r.project.team.initials }}{% endif %}</div>
+          <div class="buyut">
+            <a class="baslik" href="{{ r.get_absolute_url }}">{% if user.is_team %}{{ r.sponsor.name }}{% else %}{{ r.project.team.name }}{% endif %}</a>
+            <div class="kucuk soluk">{{ r.project.title }}: {{ r.get_kind_display|lower }}{% if r.amount %}, {{ r.amount|tl }}{% endif %}</div>
+          </div>
+          <span class="durum {{ r.status }}">{{ r.get_status_display }}</span>
+          <span class="kucuk soluk">{{ r.created_at|date:"d M" }}</span>
+        </li>
+      {% empty %}
+        <li class="bos">Burada henüz bir şey yok. {% if user.is_team %}<a href="{% url 'sponsors:list' %}">Destekçilere göz at</a>{% else %}<a href="{% url 'projects:list' %}">Projelere göz at</a>{% endif %}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

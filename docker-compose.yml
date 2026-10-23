@@ -1,0 +1,88 @@
+# Tek sunucuda yayın: PostgreSQL + Redis + Kanat + Caddy (otomatik HTTPS) + günlük zamanlayıcı
+#   cp .env.example .env   # değerleri doldurun (DJANGO_DEBUG=0!)
+#   docker compose up -d --build
+#   docker compose exec web python manage.py createsuperuser
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-kanat}
+      POSTGRES_USER: ${POSTGRES_USER:-kanat}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD gerekli}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kanat}"]
+      interval: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+
+  web:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-kanat}
+      POSTGRES_USER: ${POSTGRES_USER:-kanat}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_URL: redis://redis:6379/0
+      DJANGO_BEHIND_PROXY: "1"
+      DJANGO_TRUST_X_FORWARDED_FOR: "1"
+      DJANGO_MEDIA_ROOT: /app/media
+      DJANGO_PRIVATE_MEDIA_ROOT: /app/private_media
+    volumes:
+      - media:/app/media
+      - private_media:/app/private_media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  scheduler:
+    # Günde bir kez bakım: hatırlatmalar, zaman aşımları, KVKK saklama süreleri, ödüller, haftalık özet
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-kanat}
+      POSTGRES_USER: ${POSTGRES_USER:-kanat}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_URL: redis://redis:6379/0
+      DJANGO_PRIVATE_MEDIA_ROOT: /app/private_media
+    volumes:
+      - private_media:/app/private_media
+    entrypoint: ["sh", "-c"]
+    command: ["while true; do python manage.py gunluk_bakim; sleep 86400; done"]
+    depends_on:
+      - web
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      KANAT_DOMAIN: ${KANAT_DOMAIN:?KANAT_DOMAIN gerekli, ör. kanat.example.com}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - media:/srv/media:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
+volumes:
+  pgdata:
+  media:
+  private_media:   # Caddy'ye BAĞLANMAZ: sponsorluk dosyaları yalnızca uygulama üzerinden indirilir
+  caddy_data:
+  caddy_config:

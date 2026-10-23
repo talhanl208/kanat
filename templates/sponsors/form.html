@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Destekçi profili — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>{% if creating %}Nasıl kanat olmak istersin?{% else %}Destekçi profilin{% endif %}</h1>
+  <p>Seçimlerin eşleştirme motorunu besler: ne kadar net olursa önerilen projeler o kadar isabetli olur.</p>
+</div>
+<div class="kap orta">
+  <form class="form kutu" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% include "partials/form_errors.html" %}
+    {% include "partials/field.html" with field=form.kind yatay=1 %}
+    <div class="form-satir">{% include "partials/field.html" with field=form.name %}{% include "partials/field.html" with field=form.sector %}</div>
+    {% include "partials/field.html" with field=form.league yatay=1 %}
+    <div class="form-satir">{% include "partials/field.html" with field=form.city %}{% include "partials/field.html" with field=form.website %}</div>
+    {% include "partials/field.html" with field=form.serves_all_turkey %}
+    {% include "partials/field.html" with field=form.about %}
+    {% include "partials/field.html" with field=form.support_types yatay=1 %}
+    <div class="form-satir">{% include "partials/field.html" with field=form.budget_min %}{% include "partials/field.html" with field=form.budget_max %}{% include "partials/field.html" with field=form.mentor_hours_per_month %}</div>
+    {% include "partials/field.html" with field=form.max_active_projects %}
+    {% include "partials/field.html" with field=form.offerings %}
+    {% include "partials/field.html" with field=form.interest_categories yatay=1 %}
+    {% include "partials/field.html" with field=form.competitions yatay=1 %}
+    {% include "partials/field.html" with field=form.logo %}
+    {% include "partials/field.html" with field=form.accepting_requests %}
+    <div class="form-eylem"><button class="dugme altin" type="submit">{% if creating %}Profilimi oluştur ve projeleri göster{% else %}Kaydet{% endif %}</button></div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="64" viewBox="0 0 260 64" role="img" aria-label="{{ sponsor.name }} — Kanat {{ title.name }}">
+  <rect width="260" height="64" rx="12" fill="#0A1640"/>
+  <g transform="translate(14 14)" fill="none" stroke="#14B3AD" stroke-width="2" stroke-linejoin="round">
+    <rect x="6" y="6" width="24" height="24" rx="1.5"/>
+    <rect x="6" y="6" width="24" height="24" rx="1.5" transform="rotate(45 18 18)"/>
+  </g>
+  <circle cx="32" cy="32" r="5" fill="#E8BC57"/>
+  <text x="62" y="27" fill="#E6ECFF" font-family="Verdana, sans-serif" font-size="13" font-weight="700">{{ sponsor.name|truncatechars:24 }}</text>
+  <text x="62" y="46" fill="#9DAAD6" font-family="Verdana, sans-serif" font-size="11">Kanat {{ title.name }}, {{ points }} puan</text>
+</svg>

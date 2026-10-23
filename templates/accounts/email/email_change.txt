@@ -1,0 +1,7 @@
+{% autoescape off %}Merhaba {{ user.full_name }},
+
+Kanat hesabının e-posta adresini bu adresle değiştirmek istedin. Onaylamak için (24 saat geçerli):
+
+{{ link }}
+
+Bu isteği sen yapmadıysan bu e-postayı yok sayabilirsin; hesabında değişiklik yapılmaz.{% endautoescape %}

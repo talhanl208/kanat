@@ -1,0 +1,45 @@
+{% extends "legal/base_legal.html" %}
+{% block legal %}
+<h2>1. Taraflar ve kapsam</h2>
+<p>Bu koşullar, {{ SITE.DATA_CONTROLLER_NAME }} tarafından işletilen {{ SITE.SITE_NAME }} platformunun kullanımını düzenler. Hesap oluşturarak bu koşulları kabul etmiş olursunuz.</p>
+<h2>2. Platformun rolü</h2>
+<p>Platform; proje takımlarını ve destekçileri buluşturan, eşleştirme önerileri sunan, sözleşme şablonu ve onay kaydı sağlayan bir aracıdır. Platform <strong>para veya ürün transferine aracılık etmez</strong>, ödeme almaz, tutmaz ve iletmez. Destek ilişkisi doğrudan taraflar arasında kurulur.</p>
+<h2>3. Üyelik</h2>
+<ul>
+  <li>Hesap açmak için 18 yaşını doldurmuş olmak gerekir. Reşit olmayan üyeleri olan takımların hesabını danışman öğretmen veya yetişkin bir sorumlu açar ve yönetir.</li>
+  <li>Her hesap tek bir kişiye aittir ve tek bir role (takım ya da destekçi) sahiptir. Hesap bilgilerinizin gizliliğinden siz sorumlusunuz.</li>
+  <li>Verdiğiniz bilgilerin doğru ve güncel olması gerekir. Gerçeğe aykırı kurum veya kimlik beyanı hesabın kapatılma sebebidir.</li>
+</ul>
+<h2>4. Takım üyeliği</h2>
+<ul>
+  <li>Takımı kuran kişi takımın kaptanıdır. Kaptan, 18 yaşını doldurmuş kişileri e-postayla takıma davet edebilir; bir kişi aynı anda tek bir takımda olabilir.</li>
+  <li>Üyeler projeleri düzenleyebilir, talep gönderebilir ve yazışabilir. Takım adına bağlayıcı adımlar (sözleşme onayı, teslim onayı, mentörlük oturumu onayı, engelleme, takım profili) yalnızca kaptana aittir.</li>
+  <li>Kaptan, kaptanlığı bir üyeye devredebilir. Üyesi olan bir takımın kaptanı, hesabını kapatmadan önce kaptanlığı devretmelidir.</li>
+</ul>
+<h2>5. Destek çağrıları ve engelleme</h2>
+<ul>
+  <li>Destekçiler belirli bir destek için çağrı açabilir. Çağrıya başvurmak seçilme garantisi değildir; seçim destekçiye aittir.</li>
+  <li>Taraflar birbirini engelleyebilir. Engelleme sonrası yeni talep ve mesaj gönderilemez, bekleyen talepler kapanır; onaylanmış sözleşmeler etkilenmez.</li>
+  <li>30 gün yanıtlanmayan talepler kendiliğinden kapanır.</li>
+</ul>
+<h2>6. Yasak davranışlar</h2>
+<ul>
+  <li>Taciz, hakaret, tehdit, ayrımcılık veya reşit olmayan kişilere yönelik uygunsuz her türlü yaklaşım.</li>
+  <li>Başkalarının kişisel verilerini izinsiz paylaşmak; takım üyelerinden kişisel veri talep etmek.</li>
+  <li>Sahte destek, sahte teslim onayı veya birbiriyle bağlantılı hesaplarla puan ve sıralamayı manipüle etmek.</li>
+  <li>Platformu dolandırıcılık, spam, reklam veya yarışma kurallarına aykırı amaçlarla kullanmak.</li>
+  <li>Güvenlik önlemlerini aşmaya çalışmak, otomatik araçlarla aşırı istek göndermek. (İyi niyetli güvenlik araştırmaları için <a href="{% url 'core:about' %}#guvenlik">sorumlu bildirim</a> yolunu kullanın.)</li>
+</ul>
+<h2>7. Kanat puanı, sıralama ve ödüller</h2>
+<p>Puanlar herkese açık kurallarla, yalnızca takımların onayladığı olaylardan hesaplanır. Sıralamaya ve ödüllere yalnızca doğrulanmış destekçiler girer. Şüpheli görülen puanlar yönetici incelemesine kadar sıralamaya yansımaz; kurallara aykırı olduğu tespit edilen puanlar geçersiz sayılabilir, ödüller geri alınabilir. Ödüller sembolik ve itibari niteliktedir; aksi duyurulmadıkça maddi değer taşımaz.</p>
+<h2>8. Sponsorluk dosyaları</h2>
+<p>Yüklenen PDF dosyalarında betik, gömülü dosya veya form bulunamaz; böyle dosyalar reddedilir. Dosyada reşit olmayan kişilerin fotoğraf, iletişim veya kimlik bilgisi yer almamalıdır. Dosyalar yalnızca giriş yapmış destekçilerce indirilebilir.</p>
+<h2>9. İçerik ve fikri haklar</h2>
+<p>Paylaştığınız içeriklerin haklarına sahip olduğunuzu beyan edersiniz. Projelerin fikri hakları sahiplerinde kalır. Platform'a, içeriklerinizi yalnızca hizmetin sunulması amacıyla görüntüleme ve barındırma izni verirsiniz.</p>
+<h2>10. Sorumluluğun sınırı</h2>
+<p>Platform, taraflar arasındaki desteğin teslimi, niteliği, kullanımı veya vergisel sonuçlarından sorumlu değildir. Eşleştirme puanı bir öneridir; destek kararı tamamen taraflara aittir.</p>
+<h2>11. Hesabın kapatılması</h2>
+<p>Hesabınızı dilediğiniz an kapatabilirsiniz. Koşullara aykırılık hâlinde Platform hesabı askıya alabilir veya kapatabilir.</p>
+<h2>12. Değişiklikler ve uygulanacak hukuk</h2>
+<p>Bu koşullardaki önemli değişiklikler yürürlüğe girmeden önce duyurulur ve gerektiğinde yeniden onayınız istenir. Bu koşullara Türk hukuku uygulanır; uyuşmazlıklarda [şehir] mahkemeleri ve icra daireleri yetkilidir.</p>
+{% endblock %}

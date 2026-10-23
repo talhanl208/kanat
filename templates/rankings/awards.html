@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Ödüller — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <h1>Ödüller</h1>
+  <p>Her ayın ilk günü bir önceki ayın ilk üç destekçisi, her ligde ayrı ayrı “Ayın Kanadı” olur. Yılın sonunda “Yılın Ankası”, “Yılın Kılavuzu” (en çok mentörlük) ve “Fırsat Eşitliği Ödülü” (ilk desteği en çok takıma veren) belirlenir. Her ödülün doğrulama kodlu dijital bir belgesi vardır.</p>
+</div>
+<div class="kap">
+  <section class="kutu">
+    <h2>Son verilen ödüller</h2>
+    <ul class="liste">
+      {% for a in awards %}
+        <li><svg aria-hidden="true" width="22" height="22"><use href="#i-kupa"/></svg>
+          <div class="buyut"><a class="baslik" href="{{ a.get_absolute_url }}">{{ a.get_kind_display }}{% if a.league %} ({{ a.league_label }} ligi){% endif %}: {{ a.sponsor.name }}</a><div class="kucuk soluk">{{ a.period_label }}, {{ a.rank }}. sıra, {{ a.points }} puan</div></div>
+          <span class="ozet-kod">{{ a.code }}</span></li>
+      {% empty %}
+        <li class="soluk">Henüz ödül verilmedi.</li>
+      {% endfor %}
+    </ul>
+  </section>
+  <section class="kutu">
+    <h2>Rozetler</h2>
+    <p class="soluk">Rozetler puan sıralamasından bağımsızdır; davranışı ödüllendirir.</p>
+    <ul class="rozetler">{% for slug, name, desc in badges %}<li class="rozet"><svg aria-hidden="true"><use href="#i-yildiz"/></svg><b>{{ name }}</b><span>{{ desc }}</span></li>{% endfor %}</ul>
+  </section>
+</div>
+{% endblock %}

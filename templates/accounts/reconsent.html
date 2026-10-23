@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Güncellenen metinler — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap dar sayfa-bas">
+  <h1>Metinlerimiz güncellendi</h1>
+  <p>Takım üyelikleri, destek çağrıları, sponsorluk dosyaları ve puan denetimi gibi yeni özellikler nedeniyle aşağıdaki metinleri güncelledik. Okuyup onaylaman yeterli.</p>
+</div>
+<div class="kap dar">
+  <form class="form kutu" method="post">{% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.GET.next }}">
+    {% if error %}<p class="form-hatalari" role="alert">Devam etmek için tüm kutucukları işaretle.</p>{% endif %}
+    {% for slug, doc in docs %}
+      <div class="alan onay"><label for="onay-{{ slug }}"><input type="checkbox" id="onay-{{ slug }}" name="{{ slug }}" required>
+        <span><a href="{% url 'core:legal' slug %}" target="_blank" rel="noopener">{{ doc.title|capfirst }}</a> (sürüm {{ doc.version }}, {{ doc.updated }}) {% if slug == "aydinlatma" %}metnini okudum.{% else %}güncel hâlini kabul ediyorum.{% endif %}</span></label></div>
+    {% endfor %}
+    <div class="form-eylem"><button class="dugme" type="submit">Onayla ve devam et</button></div>
+    <p class="kucuk soluk">Kabul etmek istemezsen <a href="{% url 'accounts:delete' %}">hesabını kapatabilir</a> ya da <a href="{% url 'core:data_request' %}">bize yazabilirsin</a>.</p>
+  </form>
+</div>
+{% endblock %}

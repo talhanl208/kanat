@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}E-posta bildirimleri — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap dar sayfa-bas">
+  {% if invalid %}
+    <h1>Bağlantı geçersiz</h1>
+    <p>Bu abonelik bağlantısı çalışmıyor. Bildirim tercihlerini hesap ayarlarından değiştirebilirsin.</p>
+    <a class="dugme" href="{% url 'accounts:settings' %}">Hesap ayarları</a>
+  {% elif done %}
+    <h1>E-posta bildirimleri kapatıldı</h1>
+    <p>Artık sana bildirim e-postası göndermeyeceğiz. Bildirimler sitede görünmeye devam eder; dilediğinde hesap ayarlarından yeniden açabilirsin.</p>
+    <a class="dugme ikincil" href="{% url 'core:home' %}">Ana sayfaya dön</a>
+  {% else %}
+    <h1>E-posta bildirimlerini kapat</h1>
+    <p>Yeni talep, mesaj ve sözleşme e-postalarını almak istemiyor musun? Bildirimler sitede görünmeye devam eder.</p>
+    <form method="post" action="{% url 'notifications:unsubscribe' token %}">
+      <button class="dugme" type="submit">E-posta bildirimlerini kapat</button>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

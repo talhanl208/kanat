@@ -1,0 +1,19 @@
+{% with w=field.field.widget.input_type %}
+<div class="alan{% if field.errors %} hatali{% endif %}{% if w == 'checkbox' and not field.field.widget.allow_multiple_selected %} onay{% endif %}">
+  {% if w == 'checkbox' and not field.field.widget.allow_multiple_selected %}
+    <label for="{{ field.id_for_label }}">{{ field }} <span>{{ field.label }}</span></label>
+  {% elif w == 'radio' or field.field.widget.allow_multiple_selected %}
+    <fieldset>
+      <legend>{{ field.label }}{% if field.field.required %} <span class="soluk kucuk">(zorunlu)</span>{% endif %}</legend>
+      <ul class="{% if yatay %}yatay{% else %}secenekler{% endif %}">
+        {% for choice in field %}<li><label for="{{ choice.id_for_label }}">{{ choice.tag }} <span>{{ choice.choice_label }}</span></label></li>{% endfor %}
+      </ul>
+    </fieldset>
+  {% else %}
+    <label for="{{ field.id_for_label }}">{{ field.label }}{% if not field.field.required %} <span class="soluk kucuk">(isteğe bağlı)</span>{% endif %}</label>
+    {{ field }}
+  {% endif %}
+  {% if field.help_text %}<p class="yardim">{{ field.help_text }}</p>{% endif %}
+  {% if field.errors %}<ul class="hata">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+</div>
+{% endwith %}

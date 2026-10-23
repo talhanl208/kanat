@@ -1,0 +1,17 @@
+{% extends "legal/base_legal.html" %}
+{% block legal %}
+<p>{{ SITE.SITE_NAME }} reklam, analitik veya üçüncü taraf izleme çerezi <strong>kullanmaz</strong>. Yazı tipleri ve tüm dosyalar kendi sunucumuzdan yüklenir; ziyaretiniz sırasında IP adresiniz üçüncü bir tarafa gönderilmez.</p>
+<h2>Kullandığımız çerezler</h2>
+<table>
+  <thead><tr><th>Ad</th><th>Tür</th><th>Amaç</th><th>Süre</th></tr></thead>
+  <tbody>
+    <tr><td>kanat_oturum</td><td>Zorunlu</td><td>Giriş yaptığınızda oturumunuzu tanımak</td><td>En fazla 7 gün</td></tr>
+    <tr><td>kanat_csrf</td><td>Zorunlu (güvenlik)</td><td>Formları siteler arası istek sahteciliğine (CSRF) karşı korumak</td><td>1 yıl</td></tr>
+  </tbody>
+</table>
+<p>Kesinlikle gerekli bu çerezler, Kişisel Verileri Koruma Kurumu'nun çerez uygulamalarına ilişkin rehberi doğrultusunda açık rıza gerektirmez; hizmetin güvenli sunulması için zorunludur.</p>
+<h2>Tarayıcı depolaması</h2>
+<p>Açık/koyu tema tercihiniz ve bu bilgilendirmeyi kapattığınız bilgisi, yalnızca kendi tarayıcınızın yerel depolamasında (localStorage) tutulur, sunucuya gönderilmez. Tarayıcı ayarlarınızdan dilediğiniz an silebilirsiniz.</p>
+<h2>Değişiklikler</h2>
+<p>İleride isteğe bağlı bir çerez eklenirse, kullanılmadan önce açık rızanız ayrıca istenir ve bu sayfa güncellenir.</p>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load kanat_tags %}
+{% block title %}Panelim — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap panel-bas">
+  <div><p class="soluk">Merhaba {{ user.get_short_name }},</p><h1>{{ team.name }}</h1></div>
+  <div class="form-eylem">
+    <a class="dugme ikincil" href="{% url 'projects:members' %}">Takım üyeleri</a>
+    {% if is_captain %}<a class="dugme ikincil" href="{% url 'projects:team_edit' %}">Takım profili</a>{% endif %}
+    <a class="dugme" href="{% url 'projects:create' %}">Yeni proje</a>
+  </div>
+</div>
+{% for p in expired %}
+  <div class="kap"><div class="uyari-kutu">“{{ p.title }}” projesinin son tarihi geçti; listelerden kalktı. <a href="{% url 'projects:edit' p.slug %}">Tarihi güncelle</a></div></div>
+{% endfor %}
+<div class="kap bolum-ust">
+  <div class="ozet-serit">
+    <div class="vurgu"><b>{{ projects|length }}</b><span>proje</span></div>
+    <div><b>{{ incoming|length }}</b><span>yanıt bekleyen teklif</span></div>
+    <div><b>{{ team.completed_support_count }}</b><span>teslim alınan destek</span></div>
+    <div><b>{{ team.memberships.count|add:1 }}</b><span>platformdaki üye</span></div>
+  </div>
+</div>
+<div class="kap iki-sutun">
+  <div>
+    {% if incoming %}
+      <section class="kutu" aria-labelledby="h-gelen">
+        <h2 id="h-gelen">Sana gelen destek teklifleri</h2>
+        <ul class="liste">{% for r in incoming %}
+          <li><div class="buyut"><a class="baslik" href="{{ r.get_absolute_url }}">{{ r.sponsor.name }}</a><div class="kucuk soluk">{{ r.project.title }} için {{ r.get_kind_display|lower }}{% if r.amount %}, {{ r.amount|tl }}{% endif %}{% if r.need %} · {{ r.need.title }}{% endif %}</div></div><a class="dugme kucuk" href="{{ r.get_absolute_url }}">Yanıtla</a></li>
+        {% endfor %}</ul>
+      </section>
+    {% endif %}
+
+    {% if calls %}
+      <section aria-labelledby="h-cagri">
+        <div class="bolum-bas"><h2 id="h-cagri">Projene uyan destek çağrıları</h2><a href="{% url 'sponsors:calls' %}">Tümü</a></div>
+        <div class="izgara">{% for call in calls %}{% include "partials/call_card.html" %}{% endfor %}</div>
+      </section>
+    {% endif %}
+
+    <section class="kutu{% if calls %} bolum-ust{% endif %}" aria-labelledby="h-proje">
+      <div class="kutu-bas"><h2 id="h-proje">Projelerin</h2></div>
+      {% if projects %}
+        <ul class="liste">{% for p in projects %}
+          <li><div class="buyut"><a class="baslik" href="{{ p.get_absolute_url }}">{{ p.title }}</a>
+            <div class="kucuk soluk">{{ p.get_competition_display }}, %{{ p.progress_percent }} karşılandı{% if p.dossier %} · sponsorluk dosyası var{% endif %}</div>
+            <div class="ilerleme" aria-hidden="true"><span data-yuzde="{{ p.progress_percent }}"></span></div></div>
+            <span class="durum {% if p.status == 'aktif' and not p.is_expired %}beklemede{% else %}anlasma{% endif %}">{% if p.status == 'aktif' and p.is_expired %}Süresi doldu{% else %}{{ p.get_status_display }}{% endif %}</span></li>
+        {% endfor %}</ul>
+      {% else %}
+        <div class="bos"><p>Henüz projen yok. İlk projeni ekle; sana uygun destekçileri hemen listeleyelim.</p><a class="dugme" href="{% url 'projects:create' %}">Projeni ekle</a></div>
+      {% endif %}
+    </section>
+
+    <section class="kutu" aria-labelledby="h-surec">
+      <div class="kutu-bas"><h2 id="h-surec">Destek süreçlerin</h2><a href="{% url 'matching:inbox' %}">Tümü</a></div>
+      <ul class="liste">{% for r in requests %}
+        <li><div class="buyut"><a class="baslik" href="{{ r.get_absolute_url }}">{{ r.sponsor.name }}</a><div class="kucuk soluk">{{ r.project.title }}</div></div><span class="durum {{ r.status }}">{{ r.get_status_display }}</span></li>
+      {% empty %}<li class="soluk">Henüz bir destek süreci yok. Önerilen destekçilerden birine yazarak başla.</li>{% endfor %}</ul>
+    </section>
+  </div>
+  <aside>
+    {% include "partials/strength.html" %}
+    <div class="kutu">
+      <h3>Önerilen destekçiler</h3>
+      {% if focus_project %}<p class="kucuk soluk">“{{ focus_project.title }}” için, uyum puanına göre.</p>{% endif %}
+      {% if recommendations %}
+        <ul class="liste">{% for sponsor, match in recommendations %}{% include "partials/sponsor_row.html" %}{% endfor %}</ul>
+        <a class="dugme ikincil tam" href="{% url 'sponsors:list' %}">Tüm destekçiler</a>
+      {% else %}
+        <p class="soluk">Aktif bir projen ve ihtiyaç listen olduğunda öneriler burada belirir.</p>
+      {% endif %}
+    </div>
+  </aside>
+</div>
+{% endblock %}

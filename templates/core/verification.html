@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Doğrulama — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>Doğrulanmış rozet</h1>
+  <p>{% if is_team %}Doğrulanmış takımlar destekçilerin gözünde daha güvenilirdir; “fırsat eşitliği” bonusu da yalnızca doğrulanmış takımlar için geçerlidir.{% else %}Kanat sıralamasına ve ödüllere yalnızca doğrulanmış destekçiler girer. Takımlar da önce doğrulanmış destekçileri görür.{% endif %}</p>
+</div>
+<div class="kap orta">
+  <section class="kutu">
+    <div class="kutu-bas"><h2>{{ subject }}</h2>
+      {% if subject.verified %}<span class="etiket dogrulandi"><svg aria-hidden="true"><use href="#i-kalkan"/></svg>Doğrulandı</span>
+      {% elif pending %}<span class="durum beklemede">İnceleniyor</span>
+      {% else %}<span class="durum">Doğrulanmadı</span>{% endif %}</div>
+    {% if subject.verified %}
+      <p>Yöntem: {{ subject.get_verification_method_display }}.</p>
+    {% else %}
+      <h3>Hızlı yol: otomatik doğrulama</h3>
+      {% if is_team %}
+        <p>Kaptanın e-posta adresi <b>.edu.tr</b>, <b>.k12.tr</b> ya da <b>meb.gov.tr</b> uzantılıysa ve doğrulanmışsa takımın kendiliğinden doğrulanır.</p>
+        <ul class="yapilacak">
+          <li class="{% if email_verified %}tamam{% endif %}">E-posta adresini doğrula</li>
+          <li class="{% if edu_ok %}tamam{% endif %}">Okul / üniversite / MEB e-postası kullan (şu an: {{ domain }})</li>
+        </ul>
+        {% if not edu_ok %}<p class="kucuk soluk"><a href="{% url 'accounts:email_change' %}">E-posta adresini kurum adresinle değiştirebilirsin.</a></p>{% endif %}
+      {% else %}
+        <p>E-posta adresinin alan adı profilindeki web sitesiyle aynıysa (ör. ali@firma.com.tr ↔ https://firma.com.tr) profilin kendiliğinden doğrulanır. Gmail, Hotmail gibi ücretsiz adresler bu yolla doğrulanamaz.</p>
+        <ul class="yapilacak">
+          <li class="{% if email_verified %}tamam{% endif %}">E-posta adresini doğrula</li>
+          <li class="{% if domain_ok %}tamam{% endif %}">Kurumsal e-posta ({{ domain }}) ile web sitesi ({{ site_host|default:"eklenmedi" }}) eşleşsin</li>
+        </ul>
+        <p class="kucuk soluk"><a href="{% url 'sponsors:edit' %}">Web siteni güncelle</a> · <a href="{% url 'accounts:email_change' %}">E-posta adresini değiştir</a></p>
+      {% endif %}
+
+      <h3>Ya da yönetime başvur</h3>
+      {% if pending %}
+        <p class="uyari-kutu">{{ pending.created_at|date:"d M Y" }} tarihli başvurun inceleniyor. Sonuçlanınca bildirim alacaksın.</p>
+      {% else %}
+        <form class="form" method="post" novalidate>{% csrf_token %}
+          {% include "partials/form_errors.html" %}
+          {% include "partials/field.html" with field=form.evidence_url %}
+          {% include "partials/field.html" with field=form.note %}
+          <p class="kucuk soluk">T.C. kimlik numarası, vergi kimlik numarası ya da kimlik fotoğrafı gönderme; gerekirse seninle iletişime geçeriz.</p>
+          <div class="form-eylem"><button class="dugme" type="submit">Başvuruyu gönder</button></div>
+        </form>
+      {% endif %}
+    {% endif %}
+  </section>
+  {% if history %}
+    <section class="kutu"><h2>Başvuru geçmişi</h2>
+      <ul class="liste">{% for h in history %}<li><div class="buyut">{{ h.created_at|date:"d M Y" }}{% if h.response_note %}<div class="kucuk soluk">{{ h.response_note }}</div>{% endif %}</div><span class="durum {% if h.status == 'onaylandi' %}anlasma{% elif h.status == 'reddedildi' %}red{% else %}beklemede{% endif %}">{{ h.get_status_display }}</span></li>{% endfor %}</ul>
+    </section>
+  {% endif %}
+</div>
+{% endblock %}

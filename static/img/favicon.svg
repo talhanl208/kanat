@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" role="img" aria-label="Kanat">
+  <rect width="40" height="40" rx="10" fill="#0A1640"/>
+  <g fill="none" stroke="#14B3AD" stroke-width="2.2" stroke-linejoin="round">
+    <rect x="10.5" y="10.5" width="19" height="19" rx="1.5"/>
+    <rect x="10.5" y="10.5" width="19" height="19" rx="1.5" transform="rotate(45 20 20)"/>
+  </g>
+  <circle cx="20" cy="20" r="4.2" fill="#E8BC57"/>
+</svg>

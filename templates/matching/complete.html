@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Teslim ve teşekkür — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>Teslim aldınız mı?</h1>
+  <p>Bu adım süreci kapatır ve {{ req.sponsor.name }} adlı destekçiye Kanat puanı kazandırır. Yalnızca destek gerçekten ulaştıysa onayla.</p>
+</div>
+<div class="kap orta">
+  <form class="form kutu" method="post" novalidate>
+    {% csrf_token %}
+    {% include "partials/form_errors.html" %}
+    {% include "partials/field.html" with field=form.delivered_value %}
+    {% if form.fulfilled_needs.field.queryset %}{% include "partials/field.html" with field=form.fulfilled_needs %}{% endif %}
+    {% include "partials/field.html" with field=form.rating yatay=1 %}
+    {% include "partials/field.html" with field=form.thanks_note %}
+    {% include "partials/field.html" with field=form.thanks_public %}
+    {% include "partials/field.html" with field=form.received %}
+    <div class="form-eylem"><button class="dugme" type="submit">Onayla ve teşekkür et</button><a href="{{ req.get_absolute_url }}">Vazgeç</a></div>
+  </form>
+</div>
+{% endblock %}

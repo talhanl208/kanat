@@ -1,0 +1,12 @@
+{% autoescape off %}Merhaba {{ user.get_short_name }},
+
+Bu hafta {{ sponsor.name }} profiline uyan yeni projeler yayınlandı:
+{% for project, match in recs %}
+- {{ project.title }} ({{ project.team.name }}, {{ project.team.city }}) — uyum %{{ match.score }}
+  {{ match.reasons.0 }}
+  {{ base }}{{ project.get_absolute_url }}
+{% endfor %}
+Tüm öneriler panelinde: {{ base }}/panel/
+
+--
+Bu özeti kapatmak için: {{ unsubscribe }}{% endautoescape %}

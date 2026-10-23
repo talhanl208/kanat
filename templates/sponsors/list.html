@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load kanat_tags %}
+{% block title %}Destekçiler — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <h1>Destekçiler</h1>
+  <p>Firmalar, kurumlar ve gönüllü mentörler. Doğrulanmış rozeti, kurumsal e-posta alan adıyla ya da yönetim incelemesiyle teyit edilen destekçileri gösterir.</p>
+</div>
+<div class="kap">
+  <form class="filtre" method="get" role="search">
+    <label class="gizli" for="id_q">Ara</label>
+    <input class="input" type="search" name="q" id="id_q" value="{{ form.q.value|default:'' }}" placeholder="Ad, sektör ya da ürün ara">
+    <label class="gizli" for="id_destek">Destek türü</label>{{ form.destek }}
+    <label class="gizli" for="id_alan">Alan</label>{{ form.alan }}
+    <label class="gizli" for="id_lig">Ölçek</label>{{ form.lig }}
+    <span></span>
+    <button class="dugme" type="submit">Süz</button>
+  </form>
+  {% if page.object_list %}
+    <div class="kutu"><ul class="liste">
+      {% for sponsor in page.object_list %}
+        <li>
+          <div class="avatar destekci" aria-hidden="true">{% if sponsor.logo %}<img src="{{ sponsor.logo.url }}" alt="" loading="lazy">{% else %}{{ sponsor.initials }}{% endif %}</div>
+          <div class="buyut">
+            <a class="baslik" href="{{ sponsor.get_absolute_url }}">{{ sponsor.name }}</a>
+            {% if sponsor.verified %}<span class="etiket dogrulandi"><svg aria-hidden="true"><use href="#i-kalkan"/></svg>Doğrulandı</span>{% endif %}
+            <div class="kucuk soluk">{{ sponsor.sector }}, {{ sponsor.city }}{% if sponsor.serves_all_turkey %}, tüm Türkiye{% endif %}</div>
+            <ul class="etiketler">{% for t in sponsor.support_types %}<li class="etiket {{ t }}">{{ t|destek_adi }}</li>{% endfor %}</ul>
+          </div>
+          {% if not sponsor.accepting_requests %}<span class="durum">Şu an talep almıyor</span>{% elif sponsor.at_capacity %}<span class="durum">Kapasite dolu</span>{% endif %}
+        </li>
+      {% endfor %}
+    </ul></div>
+    {% include "partials/pagination.html" %}
+  {% else %}
+    <div class="bos"><p>Bu ölçütlere uyan destekçi yok.</p><a class="dugme ikincil" href="{% url 'sponsors:list' %}">Süzgeçleri temizle</a></div>
+  {% endif %}
+</div>
+{% endblock %}

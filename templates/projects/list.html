@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Destek arayan projeler — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <h1>Destek arayan projeler</h1>
+  <p>{% if user.is_sponsor %}Her kartın köşesindeki halka, projenin senin profilinle uyumunu gösterir.{% else %}Alanına, yarışmasına ya da ihtiyacına göre süz.{% endif %}</p>
+</div>
+<div class="kap">
+  <form class="filtre" method="get" role="search">
+    <label class="gizli" for="id_q">Ara</label>
+    <input class="input" type="search" name="q" id="id_q" value="{{ form.q.value|default:'' }}" placeholder="Proje, takım ya da malzeme ara">
+    <label class="gizli" for="id_alan">Alan</label>{{ form.alan }}
+    <label class="gizli" for="id_yarisma">Yarışma</label>{{ form.yarisma }}
+    <label class="gizli" for="id_ihtiyac">İhtiyaç</label>{{ form.ihtiyac }}
+    <label class="gizli" for="id_sehir">Şehir</label>
+    <select class="input" name="sehir" id="id_sehir"><option value="">Tüm şehirler</option>{% for c in cities %}<option value="{{ c }}"{% if form.sehir.value == c %} selected{% endif %}>{{ c }}</option>{% endfor %}</select>
+    <button class="dugme" type="submit">Süz</button>
+  </form>
+  {% if page.object_list %}
+    <div class="izgara">{% for project in page.object_list %}{% include "partials/project_card.html" %}{% endfor %}</div>
+    {% include "partials/pagination.html" %}
+  {% else %}
+    <div class="bos"><p>Bu ölçütlere uyan proje bulunamadı. Süzgeçleri gevşetmeyi dene.</p><a class="dugme ikincil" href="{% url 'projects:list' %}">Süzgeçleri temizle</a></div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% if page.has_other_pages %}
+<nav class="sayfalama" aria-label="Sayfalar">
+  {% if page.has_previous %}<a class="dugme ikincil kucuk" href="?{% if querystring %}{{ querystring }}&amp;{% endif %}sayfa={{ page.previous_page_number }}">Önceki</a>{% endif %}
+  <span class="soluk">{{ page.number }} / {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a class="dugme ikincil kucuk" href="?{% if querystring %}{{ querystring }}&amp;{% endif %}sayfa={{ page.next_page_number }}">Sonraki</a>{% endif %}
+</nav>
+{% endif %}

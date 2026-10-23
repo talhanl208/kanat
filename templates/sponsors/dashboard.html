@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load kanat_tags %}
+{% block title %}Panelim — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap panel-bas">
+  <div><p class="soluk">Merhaba {{ user.get_short_name }},</p><h1>{{ sponsor.name }}</h1></div>
+  <div class="form-eylem">
+    <a class="dugme ikincil" href="{% url 'sponsors:impact' %}">Etki raporum</a>
+    <a class="dugme ikincil" href="{% url 'sponsors:call_create' %}">Destek çağrısı aç</a>
+    <a class="dugme" href="{% url 'projects:list' %}">Projeleri keşfet</a>
+  </div>
+</div>
+{% if not sponsor.verified %}
+  <div class="kap"><div class="uyari-kutu">Profilin henüz doğrulanmadı. Puan kazanmaya devam edersin ama <b>sıralamaya ve ödüllere yalnızca doğrulanmış destekçiler girer.</b> <a href="{% url 'core:verification' %}">Şimdi doğrula</a></div></div>
+{% endif %}
+<div class="kap bolum-ust">
+  <div class="ozet-serit">
+    <div class="vurgu"><b>{{ points }}</b><span>toplam Kanat puanı{% if held %}, {{ held }} incelemede{% endif %}</span></div>
+    <div><b>{{ month_points|default:0 }}</b><span>{{ period.label }} puanı</span></div>
+    <div><b>{% if my_rank %}{{ my_rank }}.{% else %}–{% endif %}</b><span>{% if sponsor.verified %}bu ayki sıran{% else %}sıralama için doğrulama gerekli{% endif %}</span></div>
+    <div><b>{{ active_load }}{% if sponsor.max_active_projects %}/{{ sponsor.max_active_projects }}{% endif %}</b><span>{% if sponsor.at_capacity %}kapasite dolu{% else %}süren destek{% endif %}</span></div>
+  </div>
+</div>
+<div class="kap iki-sutun">
+  <div>
+    {% if incoming %}
+      <section class="kutu" aria-labelledby="h-gelen">
+        <h2 id="h-gelen">Yanıt bekleyen talepler</h2>
+        <p class="kucuk soluk">72 saat içinde yanıt verip desteği tamamlarsan hızlı yanıt bonusu kazanırsın.</p>
+        <ul class="liste">{% for r in incoming %}
+          <li><div class="buyut"><a class="baslik" href="{{ r.get_absolute_url }}">{{ r.project.title }}</a><div class="kucuk soluk">{{ r.project.team.name }}: {{ r.get_kind_display|lower }}{% if r.amount %}, {{ r.amount|tl }}{% endif %}{% if r.call %} · çağrı başvurusu{% endif %}</div></div>
+            <a class="dugme kucuk" href="{{ r.get_absolute_url }}">Yanıtla</a></li>
+        {% endfor %}</ul>
+      </section>
+    {% endif %}
+    <section aria-labelledby="h-oneri">
+      <div class="bolum-bas"><h2 id="h-oneri">Sana en uygun projeler</h2><a href="{% url 'projects:list' %}">Tüm projeler</a></div>
+      {% if recommendations %}
+        <div class="izgara">{% for project, match in recommendations %}
+          <article class="proje">
+            <div class="proje-ust">
+              <div class="avatar" aria-hidden="true">{{ project.team.initials }}</div>
+              <div><h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3><span class="kucuk soluk">{{ project.team.name }}, {{ project.team.city }}</span></div>
+              <div class="sag">{% include "partials/score_ring.html" %}</div>
+            </div>
+            <ul class="nedenler">{% for r in match.reasons|slice:":3" %}<li>{{ r }}</li>{% endfor %}</ul>
+            <div class="proje-alt"><span>{{ match.level_label }}</span><span>{% if project.team.verified %}Doğrulanmış takım{% else %}{{ project.get_stage_display }}{% endif %}</span></div>
+          </article>
+        {% endfor %}</div>
+      {% else %}
+        <div class="bos"><p>Profiline uyan aktif proje bulunamadı. İlgi alanlarını ya da destek türlerini genişletmeyi dene.</p><a class="dugme ikincil" href="{% url 'sponsors:edit' %}">Profili düzenle</a></div>
+      {% endif %}
+    </section>
+    <section class="kutu bolum-ust" aria-labelledby="h-surec">
+      <div class="kutu-bas"><h2 id="h-surec">Destek süreçlerin</h2><a href="{% url 'matching:inbox' %}">Tümü</a></div>
+      <ul class="liste">{% for r in requests %}
+        <li><div class="buyut"><a class="baslik" href="{{ r.get_absolute_url }}">{{ r.project.title }}</a><div class="kucuk soluk">{{ r.project.team.name }}</div></div><span class="durum {{ r.status }}">{{ r.get_status_display }}</span></li>
+      {% empty %}<li class="soluk">Henüz bir destek süreci yok.</li>{% endfor %}</ul>
+    </section>
+  </div>
+  <aside>
+    {% include "partials/strength.html" %}
+    <div class="kutu">
+      <div class="kutu-bas"><h3>Çağrıların</h3><a href="{% url 'sponsors:call_create' %}">Yeni</a></div>
+      <ul class="liste">{% for c in calls %}
+        <li><div class="buyut"><a class="baslik" href="{{ c.get_absolute_url }}">{{ c.title }}</a><div class="kucuk soluk">{{ c.applications.count }} başvuru · {{ c.slots_left }}/{{ c.slots }} yer</div></div>{% if c.is_open %}<span class="durum beklemede">Açık</span>{% else %}<span class="durum">Kapalı</span>{% endif %}</li>
+      {% empty %}<li class="soluk kucuk">Çağrı açarak belirli bir destek için başvuru toplayabilirsin, ör. “3 İHA takımına motor desteği”.</li>{% endfor %}</ul>
+    </div>
+    <div class="kutu">
+      <div class="kutu-bas"><h3>Unvanın</h3>{% include "partials/title.html" %}</div>
+      {% if title.next_name %}<div class="ilerleme" aria-hidden="true"><span data-yuzde="{{ title.progress }}"></span></div>{% endif %}
+      <p class="kucuk soluk">{{ title.description }}</p>
+      <a href="{% url 'rankings:leaderboard' %}">Sıralamayı ve puan kurallarını gör</a>
+    </div>
+    <div class="kutu">
+      <h3>Rozetlerin</h3>
+      <ul class="rozetler">{% for b in badges %}<li class="rozet{% if not b.earned %} kilitli{% endif %}" title="{{ b.description }}"><svg aria-hidden="true"><use href="#i-yildiz"/></svg><b>{{ b.name }}</b></li>{% endfor %}</ul>
+    </div>
+  </aside>
+</div>
+{% endblock %}

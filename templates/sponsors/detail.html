@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load kanat_tags %}
+{% block title %}{{ sponsor.name }} — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <div class="proje-ust">
+    <div class="avatar destekci buyuk" aria-hidden="true">{% if sponsor.logo %}<img src="{{ sponsor.logo.url }}" alt="">{% else %}{{ sponsor.initials }}{% endif %}</div>
+    <div>
+      <h1>{{ sponsor.name }}</h1>
+      <ul class="bilgi-satiri">
+        <li>{{ sponsor.get_kind_display }}</li><li>{{ sponsor.sector }}</li>
+        <li><svg aria-hidden="true"><use href="#i-konum"/></svg>{{ sponsor.city }}{% if sponsor.serves_all_turkey %}, tüm Türkiye'ye destek{% endif %}</li>
+        {% if sponsor.verified %}<li><span class="etiket dogrulandi"><svg aria-hidden="true"><use href="#i-kalkan"/></svg>Doğrulanmış destekçi</span></li>{% endif %}
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="kap iki-sutun">
+  <div>
+    <section class="kutu"><h2>Hakkında</h2><div class="metin">{{ sponsor.about|linebreaks }}</div>
+      {% if sponsor.website %}<p><a href="{{ sponsor.website }}" rel="nofollow noopener noreferrer" target="_blank">{{ sponsor.website }}</a></p>{% endif %}</section>
+
+    <section class="kutu"><h2>Sunduğu destekler</h2>
+      <ul class="etiketler">{% for t in sponsor.support_types %}<li class="etiket {{ t }}">{{ t|destek_adi }}</li>{% endfor %}</ul>
+      {% if sponsor.offering_keywords %}<h3>Ürün ve hizmetler</h3><ul class="etiketler">{% for k in sponsor.offering_keywords %}<li class="etiket">{{ k }}</li>{% endfor %}</ul>{% endif %}
+      {% if sponsor.interest_labels %}<h3>İlgilendiği alanlar</h3><p>{{ sponsor.interest_labels|join:", " }}</p>{% endif %}
+      {% if sponsor.budget_max or sponsor.mentor_hours_per_month %}
+        <ul class="bilgi-satiri">
+          {% if sponsor.budget_max %}<li>Proje başına {% if sponsor.budget_min %}{{ sponsor.budget_min|tl }} ile {% endif %}{{ sponsor.budget_max|tl }} arası</li>{% endif %}
+          {% if sponsor.mentor_hours_per_month %}<li>Ayda {{ sponsor.mentor_hours_per_month }} saat mentörlük</li>{% endif %}
+        </ul>
+      {% endif %}
+    </section>
+
+    <section class="kutu"><h2>Rozetler</h2>
+      <ul class="rozetler">{% for b in badges %}
+        <li class="rozet{% if not b.earned %} kilitli{% endif %}"><svg aria-hidden="true"><use href="#i-yildiz"/></svg><b>{{ b.name }}</b><span>{{ b.description }}</span>{% if not b.earned %}<span class="gizli">Henüz kazanılmadı</span>{% endif %}</li>
+      {% endfor %}</ul>
+    </section>
+
+    {% if calls %}
+      <section class="bolum"><h2>Açık destek çağrıları</h2>
+        <div class="izgara">{% for call in calls %}{% include "partials/call_card.html" %}{% endfor %}</div>
+      </section>
+    {% endif %}
+
+    {% if thanks %}
+      <section class="bolum"><h2>Takımlardan teşekkürler</h2>
+        <div class="notlar">{% for t in thanks %}<figure class="not"><blockquote>“{{ t.thanks_note }}”</blockquote><figcaption><b>{{ t.project.team.name }}</b>, {{ t.project.title }}</figcaption></figure>{% endfor %}</div>
+      </section>
+    {% endif %}
+  </div>
+
+  <aside>
+    <div class="kutu">
+      <div class="kutu-bas"><h3>Kanat puanı</h3>{% include "partials/title.html" %}</div>
+      <p class="sayi" aria-label="{{ points }} puan"><span class="sayi">{{ points }}</span> puan</p>
+      {% if not sponsor.verified %}<p class="kucuk soluk">Doğrulanmadığı için sıralamada yer almıyor.</p>{% endif %}
+      {% if title.next_name %}
+        <div class="ilerleme" aria-hidden="true"><span data-yuzde="{{ title.progress }}"></span></div>
+        <p class="kucuk soluk">{{ title.next_name }} unvanına {{ title.to_next }} puan kaldı.</p>
+      {% endif %}
+      <p class="kucuk soluk">{{ title.description }}</p>
+    </div>
+    {% if user.is_team and blocked %}
+      <div class="kutu"><p class="soluk kucuk">Bu destekçiyle aranızda engelleme var.</p></div>
+    {% elif user.is_team and sponsor.can_receive_requests %}
+      <div class="kutu"><h3>Projen için destek iste</h3>
+        <p class="soluk kucuk">Talebin, uyum puanınla birlikte destekçiye iletilir.</p>
+        <a class="dugme tam" href="{% url 'matching:ask' sponsor.slug %}">Destek iste</a></div>
+    {% elif user.is_team %}
+      <div class="kutu"><p class="soluk kucuk">{% if sponsor.at_capacity %}Bu destekçinin kapasitesi şu an dolu.{% else %}Bu destekçi şu an talep almıyor.{% endif %} Açık çağrıları varsa onlara başvurabilirsin.</p></div>
+    {% elif not user.is_authenticated %}
+      <div class="kutu"><h3>Takımın mı var?</h3><p class="soluk kucuk">Kayıt ol, projeni ekle ve bu destekçiden destek iste.</p>
+        <a class="dugme tam" href="{% url 'accounts:register' %}?rol=takim">Takımımı kaydet</a></div>
+    {% endif %}
+    {% if supported %}
+      <div class="kutu"><h3>Desteklediği projeler</h3>
+        <ul class="liste">{% for r in supported %}<li><a class="baslik" href="{{ r.project.get_absolute_url }}">{{ r.project.title }}</a><span class="kucuk soluk">{{ r.project.team.city }}</span></li>{% endfor %}</ul></div>
+    {% endif %}
+    {% if awards %}
+      <div class="kutu"><h3>Ödüller</h3>
+        <ul class="liste">{% for a in awards %}<li><svg class="unvan" aria-hidden="true" width="18" height="18"><use href="#i-kupa"/></svg><a class="baslik" href="{{ a.get_absolute_url }}">{{ a.get_kind_display }}</a><span class="kucuk soluk">{{ a.period_label }}, {{ a.rank }}.</span></li>{% endfor %}</ul></div>
+    {% endif %}
+    <div class="kutu kucuk">
+      <h3>Rozeti sitende göster</h3>
+      <p class="soluk">Bu görseli kendi web sitene ekleyebilirsin; unvanın değiştikçe kendiliğinden güncellenir.</p>
+      <img src="{% url 'rankings:badge' sponsor.slug %}" alt="{{ sponsor.name }} Kanat rozeti" width="260" height="64" loading="lazy">
+    </div>
+  </aside>
+</div>
+{% endblock %}

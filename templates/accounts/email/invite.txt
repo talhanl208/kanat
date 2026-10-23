@@ -1,0 +1,10 @@
+{% autoescape off %}Merhaba,
+
+{{ inviter }}, seni Kanat'ta "{{ team.name }}" takımına davet etti.
+
+Daveti kabul etmek için (7 gün geçerli):
+
+{{ link }}
+
+Kanat hesabın yoksa bağlantıyı açınca kayıt olabilirsin. Kanat'ta hesap açmak için 18 yaşını
+doldurmuş olmak gerekir. Bu daveti beklemiyorsan e-postayı yok sayabilirsin.{% endautoescape %}

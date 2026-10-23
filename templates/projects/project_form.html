@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{% if creating %}Yeni proje{% else %}{{ project.title }}{% endif %} — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <h1>{% if creating %}Projeni anlat{% else %}Projeyi düzenle{% endif %}</h1>
+  <p>İhtiyaçlarını ne kadar somut yazarsan eşleştirme o kadar isabetli olur. “Motor” yerine “4 adet 48V fırçasız DC motor” gibi.</p>
+</div>
+<div class="kap">
+  <form class="form" method="post" novalidate>
+    {% csrf_token %}
+    {% include "partials/form_errors.html" %}
+    <section class="kutu">
+      <h2>Proje</h2>
+      <div class="form-satir">{% include "partials/field.html" with field=form.title %}{% include "partials/field.html" with field=form.category %}</div>
+      {% include "partials/field.html" with field=form.summary %}
+      <div class="form-satir">{% include "partials/field.html" with field=form.competition %}{% include "partials/field.html" with field=form.competition_detail %}</div>
+      <div class="form-satir">{% include "partials/field.html" with field=form.stage %}{% include "partials/field.html" with field=form.deadline %}</div>
+      {% include "partials/field.html" with field=form.description %}
+      {% include "partials/field.html" with field=form.sponsor_benefits %}
+    </section>
+
+    <section class="kutu">
+      <div class="kutu-bas"><h2>İhtiyaç listesi</h2><span class="soluk kucuk">En az bir, en fazla 20 satır</span></div>
+      {{ formset.management_form }}
+      {% if formset.non_form_errors %}<ul class="form-hatalari">{% for e in formset.non_form_errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      <div class="form" data-satirlar>
+        {% for f in formset %}
+          <div class="ihtiyac-satiri">
+            {% for hidden in f.hidden_fields %}{{ hidden }}{% endfor %}
+            {% include "partials/field.html" with field=f.kind %}
+            {% include "partials/field.html" with field=f.title %}
+            {% include "partials/field.html" with field=f.detail %}
+            {% include "partials/field.html" with field=f.estimated_cost %}
+            {% include "partials/field.html" with field=f.mentor_hours %}
+            <div>{% include "partials/field.html" with field=f.fulfilled %}{% if f.instance.pk %}{% include "partials/field.html" with field=f.DELETE %}{% endif %}</div>
+          </div>
+        {% endfor %}
+      </div>
+      <template id="bos-satir">
+        <div class="ihtiyac-satiri">
+          {% with f=formset.empty_form %}
+            {% for hidden in f.hidden_fields %}{{ hidden }}{% endfor %}
+            {% include "partials/field.html" with field=f.kind %}
+            {% include "partials/field.html" with field=f.title %}
+            {% include "partials/field.html" with field=f.detail %}
+            {% include "partials/field.html" with field=f.estimated_cost %}
+            {% include "partials/field.html" with field=f.mentor_hours %}
+            <div>{% include "partials/field.html" with field=f.fulfilled %}</div>
+          {% endwith %}
+        </div>
+      </template>
+      <div class="form-eylem"><button class="dugme ikincil kucuk" type="button" data-satir-ekle="{{ formset.prefix }}">İhtiyaç ekle</button></div>
+    </section>
+    <div class="form-eylem"><button class="dugme" type="submit">{% if creating %}Projeyi yayınla{% else %}Değişiklikleri kaydet{% endif %}</button>
+      {% if not creating %}<a href="{{ project.get_absolute_url }}">Vazgeç</a>{% endif %}</div>
+  </form>
+</div>
+{% endblock %}

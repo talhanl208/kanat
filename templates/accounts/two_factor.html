@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}İki adımlı doğrulama — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>İki adımlı doğrulama</h1>
+  <p>Parolan sızsa bile hesabına telefonun olmadan girilemez. Sözleşme onaylayan kaptanlara ve destekçilere özellikle öneririz.</p>
+</div>
+<div class="kap orta">
+  {% if recovery_codes %}
+    <section class="kutu" aria-labelledby="h-kurtarma">
+      <h2 id="h-kurtarma">Kurtarma kodların</h2>
+      <p><strong>Bu kodları şimdi kaydet; bir daha gösterilmeyecek.</strong> Telefonunu kaybedersen her biriyle bir kez giriş yapabilirsin.</p>
+      <ul class="kurtarma" id="kurtarma-kodlari">{% for c in recovery_codes %}<li>{{ c }}</li>{% endfor %}</ul>
+      <div class="form-eylem">
+        <button class="dugme ikincil kucuk" type="button" data-kopyala="kurtarma-kodlari">Kodları kopyala</button>
+        <button class="dugme ikincil kucuk" type="button" data-yazdir>Yazdır</button>
+        {% if just_enabled %}<a class="dugme kucuk" href="{{ continue_url }}">Kaydettim, devam et</a>{% endif %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if user.totp_enabled %}
+    <section class="kutu">
+      <div class="kutu-bas"><h2>Durum</h2><span class="durum anlasma">Açık</span></div>
+      <p class="soluk">{{ user.totp_enabled_at|date:"d M Y" }} tarihinden beri açık. Kullanılmamış kurtarma kodu: <b>{{ codes_left }}</b>.</p>
+      <details>
+        <summary>Yeni kurtarma kodları oluştur</summary>
+        <form class="form" method="post">{% csrf_token %}
+          <div class="alan"><label for="regen-kod">Uygulamadaki kod</label><input class="input" type="text" id="regen-kod" name="code" autocomplete="one-time-code" inputmode="numeric" maxlength="20" required></div>
+          <button class="dugme ikincil kucuk" type="submit" name="regenerate" value="1">Kodları yenile (eskiler geçersiz olur)</button>
+        </form>
+      </details>
+    </section>
+    <section class="kutu">
+      <h2>Kapat</h2>
+      <form class="form" method="post" data-onay="İki adımlı doğrulama kapatılacak. Emin misin?">{% csrf_token %}
+        {% include "partials/field.html" with field=disable_form.password %}
+        {% include "partials/field.html" with field=disable_form.code %}
+        <button class="dugme tehlike kucuk" type="submit" name="disable" value="1">İki adımlı doğrulamayı kapat</button>
+      </form>
+    </section>
+  {% elif not recovery_codes %}
+    <section class="kutu">
+      <h2>Kurulum</h2>
+      <ol class="adim-adim">
+        <li>Telefonuna bir doğrulama uygulaması kur (Google Authenticator, Microsoft Authenticator, Aegis…).</li>
+        <li>Uygulamada “Kurulum anahtarı gir”i seç ve aşağıdaki anahtarı yaz. Bu sayfayı telefondan açtıysan <a href="{{ otpauth }}">bu bağlantıya dokunarak</a> doğrudan ekleyebilirsin.</li>
+        <li>Uygulamanın gösterdiği 6 haneli kodu aşağıya yaz.</li>
+      </ol>
+      <p class="kucuk soluk">Hesap: {{ user.email }}</p>
+      <p class="gizli-anahtar" id="gizli-anahtar">{{ secret }}</p>
+      <button class="dugme ikincil kucuk" type="button" data-kopyala="gizli-anahtar">Anahtarı kopyala</button>
+      <form class="form bolum-ust" method="post" novalidate>{% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <div class="alan">
+          <label for="kurulum-kod">Uygulamadaki 6 haneli kod</label>
+          <input class="input kod-giris" type="text" id="kurulum-kod" name="code" autocomplete="one-time-code" inputmode="numeric" maxlength="8" required>
+        </div>
+        <div class="form-eylem"><button class="dugme" type="submit">Doğrula ve aç</button></div>
+      </form>
+    </section>
+  {% endif %}
+  <p><a href="{% url 'accounts:settings' %}">Hesap ayarlarına dön</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,5 @@
+# Docker kullanmıyorsanız: crontab -e ile ekleyin (sunucu saati Europe/Istanbul varsayıldı)
+# Her gün 03:17'de bakım (ödüller ayın ilk günlerinde, haftalık özet pazartesi kendiliğinden)
+17 3 * * * cd /srv/kanat && .venv/bin/python manage.py gunluk_bakim >> /var/log/kanat-bakim.log 2>&1
+# Her gün 04:05'te yedek
+5 4 * * * /srv/kanat/deploy/yedekle.sh >> /var/log/kanat-yedek.log 2>&1

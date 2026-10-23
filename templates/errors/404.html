@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Aradığın sayfa burada değil — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap dar sayfa-bas">
+  <p class="gokturk soluk" aria-hidden="true">𐰴𐰣𐱃</p>
+  <h1>Aradığın sayfa burada değil</h1>
+  <p>Bağlantı eskimiş ya da içerik kaldırılmış olabilir.</p>
+  <a class="dugme" href="{% url 'core:home' %}">Ana sayfaya dön</a>
+</div>
+{% endblock %}

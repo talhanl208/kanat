@@ -1,0 +1,6 @@
+{% autoescape off %}Merhaba {{ user.full_name }},
+
+Kanat hesabının e-posta adresi değiştirildi. Yeni adres: {{ new }}
+
+Bu değişikliği sen yapmadıysan hemen bu e-postayı yanıtlayarak ya da sitedeki KVKK başvuru
+formundan bize ulaş.{% endautoescape %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Teşekkür duvarı — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap sayfa-bas">
+  <h1>Teşekkür duvarı</h1>
+  <p>Takımların, desteklerini teslim aldıktan sonra kendi isteğiyle herkese açık bıraktığı notlar.</p>
+</div>
+<div class="kap">
+  {% if items %}
+    <div class="notlar">{% for t in items %}
+      <figure class="not"><blockquote>“{{ t.thanks_note }}”</blockquote>
+        <figcaption><b><a href="{{ t.project.get_absolute_url }}">{{ t.project.team.name }}</a></b> teşekkür ediyor: <a href="{{ t.sponsor.get_absolute_url }}">{{ t.sponsor.name }}</a><br>{{ t.completed_at|date:"d M Y" }}</figcaption></figure>
+    {% endfor %}</div>
+  {% else %}
+    <div class="bos"><p>İlk teşekkür notu, ilk tamamlanan destekle gelecek.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

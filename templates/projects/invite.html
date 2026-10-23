@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Takım daveti — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap dar sayfa-bas">
+  {% if invite %}
+    <p class="soluk">Takım daveti</p>
+    <h1>{{ invite.team.name }}</h1>
+    <p>{{ invite.team.institution }}, {{ invite.team.city }}</p>
+  {% else %}
+    <h1>Davet bulunamadı</h1>
+  {% endif %}
+</div>
+<div class="kap dar">
+  <div class="kutu">
+    {% if problem %}
+      <p>{{ problem }}</p>
+      <a class="dugme ikincil" href="{% url 'core:dashboard' %}">Panele dön</a>
+    {% elif login_url %}
+      <p>Daveti kabul etmek için davetin gönderildiği e-posta adresiyle giriş yap ya da yeni bir takım hesabı aç.</p>
+      <div class="form-eylem"><a class="dugme" href="{{ login_url }}">Giriş yap</a><a class="dugme ikincil" href="{{ register_url }}">Hesap oluştur</a></div>
+    {% else %}
+      <p>Katıldığında takımın projelerini düzenleyebilir, destekçilerle yazışabilirsin.</p>
+      <form method="post">{% csrf_token %}<button class="dugme" type="submit">Takıma katıl</button></form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

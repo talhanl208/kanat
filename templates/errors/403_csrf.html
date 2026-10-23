@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Güvenlik doğrulaması başarısız — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap dar sayfa-bas">
+  <p class="gokturk soluk" aria-hidden="true">𐰴𐰣𐱃</p>
+  <h1>Güvenlik doğrulaması başarısız</h1>
+  <p>Form çok uzun süre açık kalmış ya da tarayıcın güvenlik çerezini engelliyor olabilir. Sayfayı yenileyip yeniden dene.</p>
+  <a class="dugme" href="{% url 'core:home' %}">Ana sayfaya dön</a>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Kodu doğrula — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap dar sayfa-bas">
+  <h1>Kodu doğrula</h1>
+  <p>Bu alana geçmek için doğrulama uygulamandaki kodu gir.</p>
+</div>
+<div class="kap dar">
+  <form class="form kutu" method="post" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="alan">
+      <label for="kod">Doğrulama kodu ya da kurtarma kodu</label>
+      <input class="input kod-giris" type="text" name="code" id="kod" autocomplete="one-time-code" inputmode="numeric" maxlength="20" autofocus required>
+    </div>
+    <div class="form-eylem"><button class="dugme tam" type="submit">Doğrula</button></div>
+  </form>
+</div>
+{% endblock %}

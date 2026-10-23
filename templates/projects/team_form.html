@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Takım profili — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta sayfa-bas">
+  <h1>{% if creating %}Takımını tanıt{% else %}Takım profilin{% endif %}</h1>
+  <p>Destekçiler önce takımı görür. Üyelerin ad, fotoğraf ya da telefon numarası gibi kişisel verilerini buraya yazma; takımı bir bütün olarak anlat.</p>
+  {% if creating %}<p class="uyari-kutu turkuaz kucuk">Takım arkadaşın seni zaten davet ettiyse yeni takım kurma; e-postandaki davet bağlantısını aç.</p>{% endif %}
+</div>
+<div class="kap orta">
+  <form class="form kutu" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% include "partials/form_errors.html" %}
+    {% include "partials/field.html" with field=form.kind yatay=1 %}
+    <div class="form-satir">{% include "partials/field.html" with field=form.name %}{% include "partials/field.html" with field=form.institution %}</div>
+    <div class="form-satir">{% include "partials/field.html" with field=form.city %}{% include "partials/field.html" with field=form.member_count %}{% include "partials/field.html" with field=form.founded_year %}</div>
+    {% include "partials/field.html" with field=form.about %}
+    <div class="form-satir">{% include "partials/field.html" with field=form.website %}{% include "partials/field.html" with field=form.logo %}</div>
+    <div class="uyari-kutu">
+      {% include "partials/field.html" with field=form.has_minor_members %}
+      {% include "partials/field.html" with field=form.advisor_name %}
+      {% include "partials/field.html" with field=form.minors_ack %}
+    </div>
+    <div class="form-eylem"><button class="dugme" type="submit">{% if creating %}Devam et: ilk projeni ekle{% else %}Kaydet{% endif %}</button></div>
+  </form>
+</div>
+{% endblock %}

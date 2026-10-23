@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Bildirimler — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap orta panel-bas">
+  <h1>Bildirimler</h1>
+  {% if unread_notifications %}
+    <form method="post" action="{% url 'notifications:mark_all_read' %}">{% csrf_token %}
+      <button class="dugme ikincil kucuk" type="submit">Tümünü okundu say</button></form>
+  {% endif %}
+</div>
+<div class="kap orta">
+  <div class="kutu">
+    <ul class="liste bildirim-liste">
+      {% for n in page.object_list %}
+        <li class="{% if not n.read_at %}okunmamis{% endif %}">
+          <span class="nokta" aria-hidden="true"></span>
+          <span class="bildirim-tur" aria-hidden="true"><svg><use href="#{% if n.kind == 'mesaj' %}i-mesaj{% elif n.kind == 'talep' or n.kind == 'yanit' %}i-onay{% elif n.kind == 'sozlesme' %}i-dosya{% elif n.kind == 'puan' %}i-kupa{% elif n.kind == 'takim' %}i-uyeler{% elif n.kind == 'cagri' %}i-cagri{% elif n.kind == 'dogrulama' %}i-kalkan{% elif n.kind == 'son_tarih' %}i-takvim{% else %}i-zil{% endif %}"/></svg></span>
+          <div class="buyut">
+            <a class="baslik" href="{% url 'notifications:open' n.pk %}">{{ n.title }}</a>
+            {% if n.body %}<div class="kucuk soluk">{{ n.body }}</div>{% endif %}
+          </div>
+          <span class="kucuk soluk">{{ n.created_at|naturaltime }}</span>
+          {% if not n.read_at %}<span class="gizli">okunmadı</span>{% endif %}
+        </li>
+      {% empty %}
+        <li class="bos">Henüz bildirim yok. Yeni bir talep, mesaj ya da sözleşme olduğunda burada görünecek.</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% include "partials/pagination.html" %}
+  <p class="kucuk soluk">E-posta bildirimlerini <a href="{% url 'accounts:settings' %}#bildirim">hesap ayarlarından</a> açıp kapatabilirsin.</p>
+</div>
+{% endblock %}

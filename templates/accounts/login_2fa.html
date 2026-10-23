@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}İki adımlı doğrulama — {{ SITE.SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="kap dar sayfa-bas">
+  <h1>Bir adım kaldı</h1>
+  <p>Doğrulama uygulamandaki 6 haneli kodu gir. Telefonuna ulaşamıyorsan kurtarma kodlarından birini kullanabilirsin.</p>
+</div>
+<div class="kap dar">
+  <form class="form kutu" method="post" novalidate>
+    {% csrf_token %}
+    {% if error %}<p class="form-hatalari" role="alert">{{ error }}</p>{% endif %}
+    <div class="alan">
+      <label for="{{ form.code.id_for_label }}">{{ form.code.label }}</label>
+      <input class="input kod-giris" type="text" name="code" id="{{ form.code.id_for_label }}" autocomplete="one-time-code" inputmode="numeric" maxlength="20" autofocus required>
+      <p class="yardim">{{ form.code.help_text }}</p>
+    </div>
+    <div class="form-eylem"><button class="dugme tam" type="submit">Doğrula ve giriş yap</button></div>
+    <p class="kucuk soluk">Hem telefonunu hem kurtarma kodlarını kaybettiysen <a href="{% url 'core:data_request' %}">bize ulaş</a>; kimliğini doğruladıktan sonra iki adımlı doğrulamayı sıfırlarız.</p>
+  </form>
+</div>
+{% endblock %}
