@@ -4,5 +4,5 @@ argon2-cffi>=23.1,<26        # Argon2id parola özeti
 Pillow>=11.0,<13             # Görsel doğrulama ve yeniden kodlama
 whitenoise>=6.7,<7           # Statik dosyalar (sıkıştırma + önbellek başlıkları)
 gunicorn>=23.0,<24           # Üretim WSGI sunucusu
-psycopg[binary]>=3.2,<4      # PostgreSQL
+psycopg[binary]>=3.3.6,<4      # PostgreSQL
 sentry-sdk>=2.10,<3           # İsteğe bağlı hata izleme (SENTRY_DSN tanımlıysa etkinleşir)
